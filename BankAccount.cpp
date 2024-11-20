@@ -4,7 +4,8 @@
 using namespace std;
 
 BankAccount::BankAccount(string name, double money) 
-    : wallet{money}, virtualWallet{0.0}, fullName{name} {};
+    : wallet{ money }, virtualWallet{ 0.0 }, fullName{ name }, month{1} {
+};
 
 void BankAccount::printBankAccount() {
     cout << fullName << " has " << virtualWallet << " euro in his bank account." << endl;

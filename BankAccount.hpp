@@ -10,6 +10,7 @@ class BankAccount {
         double wallet;
         double virtualWallet;
         string fullName;
+        unsigned int month;
     public:
         BankAccount(string name, double money);
         void printBankAccount();
