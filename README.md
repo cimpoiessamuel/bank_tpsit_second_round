@@ -1,2 +1,2 @@
-# Progetto_TPSIT-
+# Progetto_TPSIT
 Progetto conto in banca- Gardin/Riolfo
