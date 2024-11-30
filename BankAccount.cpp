@@ -1,20 +1,21 @@
-#include "BankAccount.hpp"
+#include "BankAccount.h"
+#include <ctime>
 #include <iostream>
 #include <stdlib.h>
-#include <ctime>
+
 
 using namespace std;
 
-BankAccount::BankAccount(string name, double money) 
+BankAccount::BankAccount(string name, double money)
     : wallet{ money }, virtualWallet{ 0.0 }, fullName{ name }, monthRemeining{ 0 }, earned{ 0 } {
 };
 
 void BankAccount::printBankAccount() {
-    cout << fullName << " has " << virtualWallet << " euro in his bank account." << endl;
+    cout << fullName << " has " << virtualWallet << " euro in his bank account" << endl;
 }
 
 void BankAccount::printWallet() {
-    cout << fullName << " has " << wallet << " euro in his wallet." << endl;
+    cout << fullName << " has " << wallet << " euro in his wallet" << endl;
 }
 
 void BankAccount::addMoney(double money) {
@@ -44,20 +45,20 @@ void BankAccount::skipMonth() {
     }
     else if (monthRemeining == 0 && earned == 0) {
         return;
-    } 
+    }
     else {
         monthRemeining--;
     }
 }
 
-void BankAccount::investment(int time, int risk, double money) {
+void BankAccount::investment(int duration, int risk, double money) {
     earned = money;
     if (virtualWallet <= 0) {
         cout << "You can't invest" << endl;
         return;
     }
     virtualWallet -= money;
-    switch (time) {
+    switch (duration) {
     case 1:
         monthRemeining = 2;
         break;
@@ -87,8 +88,8 @@ void BankAccount::investment(int time, int risk, double money) {
         cout << "Risk error" << endl;
         return;
     }
-    for (int i{ 0 }; i < monthRemeining; i++) {
-        //srand(time(NULL) + i * 4);
+    for (int i{ 0 }; i <= monthRemeining; i++) {
+        srand(time(NULL) + i * 4);
         int multi = rand() % range + 1;
         if (multi % 2 == 0) {
             earned += money * (static_cast<double>(multi) / 100.0);
