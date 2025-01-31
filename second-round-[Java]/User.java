@@ -14,6 +14,8 @@ public class User {
     User(String name, String surname) {
         this.name = name;
         this.surname = surname;
+        this.ID = String.valueOf(userCounterID);
+        userCounterID++;
     }
 
 
