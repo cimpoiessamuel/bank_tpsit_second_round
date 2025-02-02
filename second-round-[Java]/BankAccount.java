@@ -41,4 +41,8 @@ public class BankAccount {
     public double getBalance() {
         return balance;
     }
+
+    public User getUser() {
+        return user;
+    }
 }

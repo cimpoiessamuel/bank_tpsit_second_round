@@ -1,23 +1,28 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.net.HttpRetryException;
 
 public class GUI implements ActionListener {
-    public BankAccount bankAcc;
+    private BankAccount bankAcc;
 
-    public JFrame frame;
+    private JFrame frame;
 
-    public JTextField balanceDisplay;
-    public JTextField balanceModifier;
+    private JTextField balanceDisplay;
+    private JTextField balanceModifier;
 
-    public Font font;
+    private Font font;
 
-    public JButton deposit;
-    public JButton withdraw;
+    private JButton deposit;
+    private JButton withdraw;
+
+    private JLabel profileLabel;
+
+    private ImageIcon profileAvatar;
+
 
     GUI(BankAccount b) {
         bankAcc = b;
+
         frame = new JFrame("Bank App");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1024, 920);
@@ -50,6 +55,16 @@ public class GUI implements ActionListener {
         deposit.addActionListener(this);
         withdraw.addActionListener(this);
 
+        profileAvatar = new ImageIcon("miscellaneous/default_user_avatar_100x100_rounded.png");
+
+        profileLabel = new JLabel();
+        profileLabel.setBounds(10,10,500,300);
+        profileLabel.setText(b.getUser().toString().toUpperCase());
+        profileLabel.setIcon(profileAvatar);
+        profileLabel.setHorizontalTextPosition(JLabel.RIGHT);
+        profileLabel.setVerticalTextPosition(JLabel.CENTER);
+
+        frame.add(profileLabel);
         frame.add(deposit);
         frame.add(withdraw);
         frame.add(balanceDisplay);

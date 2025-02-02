@@ -6,6 +6,7 @@ public class User {
 
     private static int userCounterID = 0;
 
+
     User() {
         this.ID = String.valueOf(userCounterID);
         userCounterID++;
@@ -18,5 +19,7 @@ public class User {
         userCounterID++;
     }
 
-
+    public String toString() {
+        return surname + ", " + name;
+    }
 }
