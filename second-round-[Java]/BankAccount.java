@@ -1,6 +1,4 @@
-import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 
 public class BankAccount {
     private double balance;
@@ -9,8 +7,8 @@ public class BankAccount {
 
     private static int bankAccountCounterID = 1000;
 
-    //public FileWriter trans = new FileWriter("movements.txt");
 
+    // default constructor
     BankAccount() {
         this.user = null;
         this.balance = 0.0;
@@ -18,9 +16,9 @@ public class BankAccount {
         bankAccountCounterID++;
     }
 
-    BankAccount(User user, double balance) {
+    BankAccount(User user) {
         this.user = user;
-        this.balance = balance;
+        this.balance = Math.round((Math.random() * 1000) * 100.0) / 100.0; // random decimal number between 0 and 999.99
         this.ID = String.valueOf(bankAccountCounterID);
         bankAccountCounterID++;
     }
@@ -38,5 +36,9 @@ public class BankAccount {
         } else {
             return false;
         }
+    }
+
+    public double getBalance() {
+        return balance;
     }
 }
