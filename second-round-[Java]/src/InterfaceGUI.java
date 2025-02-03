@@ -2,7 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class GUI implements ActionListener {
+public class InterfaceGUI implements ActionListener {
     private BankAccount bankAcc;
 
     private JFrame frame;
@@ -20,7 +20,7 @@ public class GUI implements ActionListener {
     private ImageIcon profileAvatar;
 
 
-    GUI(BankAccount b) {
+    InterfaceGUI(BankAccount b) {
         bankAcc = b;
 
         frame = new JFrame("Bank App");
