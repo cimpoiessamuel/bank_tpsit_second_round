@@ -5,7 +5,7 @@ public class BankAccount {
     private User user;
     private String ID;
 
-    private static int bankAccountCounterID = 1000;
+    private static int bankAccountCounterID = 100;
 
 
     // default constructor

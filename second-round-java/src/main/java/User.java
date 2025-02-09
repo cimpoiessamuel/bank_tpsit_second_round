@@ -1,13 +1,26 @@
 public class User {
     private String name;
     private String surname;
-    private String ID;
+
     private double wallet;
 
-    private static int userCounterID = 0;
+    private String username;
+    private String password;
+
+    private final String ID;
+
+    private static int userCounterID = 1000;
 
 
     User() {
+        name = null;
+        surname = null;
+
+        wallet = 0.0;
+
+        username = null;
+        password = null;
+
         this.ID = String.valueOf(userCounterID);
         userCounterID++;
     }
@@ -21,5 +34,9 @@ public class User {
 
     public String toString() {
         return surname + ", " + name;
+    }
+
+    public String getID() {
+        return ID;
     }
 }

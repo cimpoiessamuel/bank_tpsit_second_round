@@ -5,43 +5,11 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.*;
 
+import java.io.*;
+
 public class LoginGUI {
-    // main frame
-    private final JFrame frame;
 
-
-    // sub-frames container
-    private final JDesktopPane subWindowPane;
-
-
-    // login sub-frame
-    private final JInternalFrame loginInternalFrame;
-
-
-    // username and pwd text-fields
-    private final JTextField usernameTextField;
-    private final JTextField passwordTextField;
-
-
-    // text fields borders
-    private final Border usernameTextFieldBorder;
-    private final Border passwordTextFieldBorder;
-
-
-    // text fields labels
-    JLabel passwordTextFieldLabel;
-    JLabel usernameTextFieldLabel;
-
-
-    // login and sign-in buttons
-    private JButton loginButton;
-    private JButton registerButton;
-
-
-    // user info file
-    //BufferedWriter
-
-    LoginGUI() {
+    LoginGUI(JFrame mainFrame, BufferedWriter outFile, BufferedReader inFile) {
         // default app look
 //        try {
 //            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -66,21 +34,14 @@ public class LoginGUI {
         }
 
 
-        // initialising the main frame
-        frame = new JFrame("Login");
-        frame.setSize(1600, 1024);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //frame.setFocusableWindowState(false);
-        frame.setLayout(null);
-
-
         // initialising the sub-frames container
-        subWindowPane = new JDesktopPane();
+        JDesktopPane subWindowPane = new JDesktopPane();
         subWindowPane.setBounds(0, 0, 1600, 1024);
 
 
         // initialising login sub-frame
-        loginInternalFrame = new JInternalFrame("Login", false, false, false, false);
+        JInternalFrame loginInternalFrame = new JInternalFrame("Login", false, false, false, false);
+
         loginInternalFrame.setSize(500, 700);
         loginInternalFrame.setVisible(true);
         loginInternalFrame.setLayout(null);
@@ -88,7 +49,8 @@ public class LoginGUI {
 
 
         // initialising username text-field
-        usernameTextField = new JTextField();
+        JTextField usernameTextField = new JTextField();
+
         usernameTextField.setBounds(0, 0, 250, 45);
         usernameTextField.setText("Type your username");
         usernameTextField.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -98,19 +60,21 @@ public class LoginGUI {
 
 
         // initialising username text-field border
-        usernameTextFieldBorder = BorderFactory.createLineBorder(Color.GRAY, 2, true);
+        Border usernameTextFieldBorder = BorderFactory.createLineBorder(Color.GRAY, 2, true);
         usernameTextField.setBorder(usernameTextFieldBorder);
 
 
         // initialising username text-field label
-        usernameTextFieldLabel = new JLabel("Username");
+        JLabel usernameTextFieldLabel = new JLabel("Username");
+
         usernameTextFieldLabel.setBounds(0, 0, 250, 50);
         usernameTextFieldLabel.setLocation((loginInternalFrame.getWidth() - usernameTextField.getWidth()) / 2, ((loginInternalFrame.getHeight() - usernameTextField.getHeight()) / 2) - 135);
         usernameTextFieldLabel.setFont(new Font("Arial", Font.PLAIN, 16));
 
 
         // initialising password text-field
-        passwordTextField = new JTextField();
+        JTextField passwordTextField = new JTextField();
+
         passwordTextField.setBounds(0, 0, 250, 45);
         passwordTextField.setText("Type your password");
         passwordTextField.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -120,29 +84,44 @@ public class LoginGUI {
 
 
         // initialising password text-field border
-        passwordTextFieldBorder = BorderFactory.createLineBorder(Color.GRAY, 2, true);
+        Border passwordTextFieldBorder = BorderFactory.createLineBorder(Color.GRAY, 2, true);
         passwordTextField.setBorder(passwordTextFieldBorder);
 
 
         // initialising password text-field label
-        passwordTextFieldLabel = new JLabel("Password");
+        JLabel passwordTextFieldLabel = new JLabel("Password");
+
         passwordTextFieldLabel.setBounds(0, 0, 250, 50);
         passwordTextFieldLabel.setLocation((loginInternalFrame.getWidth() - passwordTextField.getWidth()) / 2, ((loginInternalFrame.getHeight() - passwordTextField.getHeight()) / 2) - 35);
         passwordTextFieldLabel.setFont(new Font("Arial", Font.PLAIN, 16));
 
 
         // login button
-        loginButton = new JButton("Login");
+        JButton loginButton = new JButton("Login");
+
         loginButton.setBounds(0, 0, 250, 45);
-        loginButton.setLocation((loginInternalFrame.getWidth() - passwordTextField.getWidth()) / 2, ((loginInternalFrame.getHeight() - passwordTextField.getHeight()) / 2) + 60);
+        loginButton.setLocation((loginInternalFrame.getWidth() - passwordTextField.getWidth()) / 2, ((loginInternalFrame.getHeight() - passwordTextField.getHeight()) / 2) + 90);
         loginButton.setFont(new Font("Arial", Font.PLAIN, 16));
 
 
         // register button
-        registerButton = new JButton("Not a member? Register now");
+        JButton registerButton = new JButton("Not a member? Register now");
+
         registerButton.setBounds(0, 0, 250, 45);
-        registerButton.setLocation((loginInternalFrame.getWidth() - passwordTextField.getWidth()) / 2, ((loginInternalFrame.getHeight() - passwordTextField.getHeight()) / 2) + 120);
+        registerButton.setLocation((loginInternalFrame.getWidth() - passwordTextField.getWidth()) / 2, ((loginInternalFrame.getHeight() - passwordTextField.getHeight()) / 2) + 150);
         registerButton.setFont(new Font("Arial", Font.PLAIN, 16));
+
+
+        // remember-me check-box
+        JCheckBox rememberMe = new JCheckBox("Keep me logged");
+
+        rememberMe.setBounds(0, 0, 200, 20);
+        rememberMe.setLocation((loginInternalFrame.getWidth() - passwordTextField.getWidth()) / 2, ((loginInternalFrame.getHeight() - passwordTextField.getHeight()) / 2) + 50);
+        rememberMe.setFont(new Font("Arial", Font.PLAIN, 14));
+
+
+        // logged user
+        User loggedUser = new User();
 
 
         // adding components to the login sub-frame
@@ -155,16 +134,18 @@ public class LoginGUI {
         loginInternalFrame.add(loginButton);
         loginInternalFrame.add(registerButton);
 
+        loginInternalFrame.add(rememberMe);
+
 
         // adding components to the sub-frame container
         subWindowPane.add(loginInternalFrame);
 
 
         // adding components to the main frame
-        frame.add(subWindowPane);
+        mainFrame.add(subWindowPane);
 
 
-        frame.setVisible(true);
+        mainFrame.setVisible(false);
 
 
         //
@@ -176,6 +157,13 @@ public class LoginGUI {
         });
 
 
+        //
+        registerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
 
 
         // if username text-field is empty, place a placeholder
@@ -215,27 +203,39 @@ public class LoginGUI {
 
 
         // everytime the frame is resized, the login sub-frame is re-centered
-        frame.addComponentListener(new ComponentAdapter() {
+        mainFrame.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                int x = (frame.getWidth() - loginInternalFrame.getWidth()) / 2;
-                int y = (frame.getHeight() - loginInternalFrame.getHeight()) / 2;
+                int x = (mainFrame.getWidth() - loginInternalFrame.getWidth()) / 2;
+                int y = (mainFrame.getHeight() - loginInternalFrame.getHeight()) / 2;
 
                 loginInternalFrame.setLocation(x, y);
             }
         });
 
 
-        // everytime the login sub-frame is moved, it re-center itself
+        // everytime the login sub-mainFrame is moved, it re-center itself
         loginInternalFrame.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentMoved(ComponentEvent e) {
-                int x = (frame.getWidth() - loginInternalFrame.getWidth()) / 2;
-                int y = (frame.getHeight() - loginInternalFrame.getHeight()) / 2;
+                int x = (mainFrame.getWidth() - loginInternalFrame.getWidth()) / 2;
+                int y = (mainFrame.getHeight() - loginInternalFrame.getHeight()) / 2;
 
                 loginInternalFrame.setLocation(x, y);
             }
         });
+
+
+        // if rememberMe is checked it saves the data
+//        rememberMe.addActionListener(e -> {
+//            if (rememberMe.isSelected()) {
+//                try {
+//                    outFile.write("Default");
+//                } catch (IOException ex) {
+//                    throw new RuntimeException(ex);
+//                }
+//            }
+//        });
 
 
 //        SwingUtilities.invokeLater(() -> {

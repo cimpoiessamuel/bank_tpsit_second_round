@@ -9,6 +9,6 @@ public class Main {
         User u = new User("pino", "angelo");
         BankAccount ba = new BankAccount(u);
 
-        LoginGUI login = new LoginGUI();
+        StartApp sa = new StartApp(ba);
     }
 }
