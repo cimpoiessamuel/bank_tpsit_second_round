@@ -1,3 +1,5 @@
+import com.formdev.flatlaf.FlatDarkLaf;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -5,9 +7,33 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
-public class MainGUI {
+public class MainFrame {
 
-    MainGUI(BankAccount b, BufferedWriter outFile, BufferedReader inFile) {
+    MainFrame(BankAccount b, BufferedWriter outFile, BufferedReader inFile) {
+
+        // default app look
+//        try {
+//            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
+
+        // light app look
+//        try {
+//            UIManager.setLookAndFeel(new FlatLightLaf());
+//        } catch (Exception e) {
+//            System.err.println("LaF initialization failed");
+//        }
+
+
+        // dark app look
+        try {
+            UIManager.setLookAndFeel(new FlatDarkLaf());
+        } catch (Exception e) {
+            System.err.println("LaF initialization failed");
+        }
+
 
         // initialising main frame
         JFrame mainFrame = new JFrame("Bank App");
@@ -16,6 +42,20 @@ public class MainGUI {
         mainFrame.setSize(1600, 1024);
         mainFrame.setLayout(null);
         mainFrame.setLocationRelativeTo(null);
+
+
+        // check if there is a default user
+        try {
+
+            // if there is not a defined user, then launch the login window
+            if (inFile.readLine().equals("default: ")) {
+
+                // instantiating the main-sub-frame
+                InternalFrame internalFrame = new InternalFrame(mainFrame, outFile, inFile);
+            }
+        } catch (IOException e) {
+            System.out.println("error");
+        }
 
 
         // main frame font
@@ -54,12 +94,9 @@ public class MainGUI {
         withdraw.setFocusable(false);
         withdraw.setBounds(250, 430, 100, 50);
 
-//        deposit.addActionListener(this);
-//        withdraw.addActionListener(this);
-
 
         // profile ImageIcon
-        ImageIcon profileAvatar = new ImageIcon("../resources/default_user_avatar_100x100_rounded.png");
+        ImageIcon profileAvatar = new ImageIcon("src/main/resources/default_user_avatar_100x100_rounded.png");
 
 
         // profile section container
@@ -74,21 +111,15 @@ public class MainGUI {
 
         // adding components to the main frame
         mainFrame.add(profileLabel);
+
         mainFrame.add(deposit);
         mainFrame.add(withdraw);
+
         mainFrame.add(balanceDisplay);
         mainFrame.add(balanceModifier);
 
 
-        try {
-            if (inFile.readLine().equals("default: ")) {
-                LoginGUI loginGUI = new LoginGUI(mainFrame, outFile, inFile);
-            }
-        } catch (IOException e) {
-            System.out.println("error");
-        }
-
-
+        // set main-frame visible
         mainFrame.setVisible(true);
     }
 

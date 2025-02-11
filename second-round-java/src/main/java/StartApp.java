@@ -15,10 +15,14 @@ public class StartApp {
         File users_info = new File(filePath);
 
 
+        boolean alreadyExists = true;
+
+
         // check if file exists, if not then create file
         if (!users_info.exists()) {
             try {
                 if (users_info.createNewFile()) {
+                    alreadyExists = false;
                     System.out.println("file created");
                 } else {
                     System.out.println("impossible to create file");
@@ -33,23 +37,22 @@ public class StartApp {
         try (BufferedWriter outFile = new BufferedWriter(new FileWriter(users_info, true));
              BufferedReader inFile = new BufferedReader(new FileReader(users_info))) {
 
-            outFile.write("default: ");
 
+            // if the file already exists, do not write "default: " on the top line
+            if (!alreadyExists) {
+                outFile.write("default: ");
+            }
+
+
+            // write immediately on disk
             outFile.flush();
 
-//            String line;
-//
-//            while ((line = inFile.readLine()) != null) {
-//                System.out.println(line);
-//            }
 
             // instancing main frame
-            MainGUI mainGUI = new MainGUI(b, outFile, inFile);
+            MainFrame mainFrame = new MainFrame(b, outFile, inFile);
 
         } catch (IOException e) {
             System.err.println("error");
         }
-
-
     }
 }
