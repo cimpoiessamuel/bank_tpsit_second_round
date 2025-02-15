@@ -1,14 +1,18 @@
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.border.Border;
 
+import java.io.File;
+import java.io.FileReader;
 import java.io.BufferedReader;
+import java.io.FileWriter;
 import java.io.BufferedWriter;
+import java.io.IOException;
 
 public class RegisterInternalFrame {
 
-    RegisterInternalFrame(JInternalFrame internalFrame, BufferedWriter outFile, BufferedReader inFile) {
+    RegisterInternalFrame(JInternalFrame internalFrame, File users_info) {
 
         // setting login window title
         internalFrame.setTitle("Register");
@@ -33,12 +37,16 @@ public class RegisterInternalFrame {
         registerMainTitle.setLocation((internalFrame.getWidth() - registerMainTitle.getWidth()) / 2, ((internalFrame.getHeight() - registerMainTitle.getHeight()) / 2) - 230);
 
 
+        // register internal-frame font
+        Font font = new Font("Arial", Font.PLAIN, 16);
+
+
         // initialising name text-field
         JTextField nameTextField = new JTextField();
 
         nameTextField.setBounds(0, 0, 250, 45);
         nameTextField.setText("Type your name");
-        nameTextField.setFont(new Font("Arial", Font.PLAIN, 16));
+        nameTextField.setFont(font);
         nameTextField.setEditable(true);
         nameTextField.setHorizontalAlignment(JTextField.CENTER);
         nameTextField.setLocation((internalFrame.getWidth() - nameTextField.getWidth()) / 2, ((internalFrame.getHeight() - nameTextField.getHeight()) / 2) - 100);
@@ -54,7 +62,7 @@ public class RegisterInternalFrame {
 
         nameTextFieldLabel.setBounds(0, 0, 250, 50);
         nameTextFieldLabel.setLocation((internalFrame.getWidth() - nameTextField.getWidth()) / 2, ((internalFrame.getHeight() - nameTextField.getHeight()) / 2) - 135);
-        nameTextFieldLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        nameTextFieldLabel.setFont(font);
 
 
         // initialising surname text-field
@@ -62,7 +70,7 @@ public class RegisterInternalFrame {
 
         surnameTextField.setBounds(0, 0, 250, 45);
         surnameTextField.setText("Type your surname");
-        surnameTextField.setFont(new Font("Arial", Font.PLAIN, 16));
+        surnameTextField.setFont(font);
         surnameTextField.setEditable(true);
         surnameTextField.setHorizontalAlignment(JTextField.CENTER);
         surnameTextField.setLocation((internalFrame.getWidth() - surnameTextField.getWidth()) / 2, ((internalFrame.getHeight() - surnameTextField.getHeight()) / 2) - 20);
@@ -78,7 +86,7 @@ public class RegisterInternalFrame {
 
         surnameTextFieldLabel.setBounds(0, 0, 250, 50);
         surnameTextFieldLabel.setLocation((internalFrame.getWidth() - surnameTextField.getWidth()) / 2, ((internalFrame.getHeight() - surnameTextField.getHeight()) / 2) - 55);
-        surnameTextFieldLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        surnameTextFieldLabel.setFont(font);
 
 
         // initialising username text-field
@@ -86,7 +94,7 @@ public class RegisterInternalFrame {
 
         usernameTextField.setBounds(0, 0, 250, 45);
         usernameTextField.setText("Type your username");
-        usernameTextField.setFont(new Font("Arial", Font.PLAIN, 16));
+        usernameTextField.setFont(font);
         usernameTextField.setEditable(true);
         usernameTextField.setHorizontalAlignment(JTextField.CENTER);
         usernameTextField.setLocation((internalFrame.getWidth() - usernameTextField.getWidth()) / 2, ((internalFrame.getHeight() - usernameTextField.getHeight()) / 2) + 60);
@@ -102,7 +110,7 @@ public class RegisterInternalFrame {
 
         usernameTextFieldLabel.setBounds(0, 0, 250, 50);
         usernameTextFieldLabel.setLocation((internalFrame.getWidth() - usernameTextField.getWidth()) / 2, ((internalFrame.getHeight() - usernameTextField.getHeight()) / 2) + 25);
-        usernameTextFieldLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        usernameTextFieldLabel.setFont(font);
 
 
         // initialising password text-field
@@ -110,7 +118,7 @@ public class RegisterInternalFrame {
 
         passwordTextField.setBounds(0, 0, 250, 45);
         passwordTextField.setText("Type your password");
-        passwordTextField.setFont(new Font("Arial", Font.PLAIN, 16));
+        passwordTextField.setFont(font);
         passwordTextField.setEditable(true);
         passwordTextField.setHorizontalAlignment(JTextField.CENTER);
         passwordTextField.setLocation((internalFrame.getWidth() - passwordTextField.getWidth()) / 2, ((internalFrame.getHeight() - passwordTextField.getHeight()) / 2) + 140);
@@ -126,7 +134,23 @@ public class RegisterInternalFrame {
 
         passwordTextFieldLabel.setBounds(0, 0, 250, 50);
         passwordTextFieldLabel.setLocation((internalFrame.getWidth() - passwordTextField.getWidth()) / 2, ((internalFrame.getHeight() - passwordTextField.getHeight()) / 2) + 105);
-        passwordTextFieldLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        passwordTextFieldLabel.setFont(font);
+
+
+        // register button
+        JButton registerButton = new JButton("Sign in");
+
+        registerButton.setBounds(0, 0, 250, 45);
+        registerButton.setLocation((internalFrame.getWidth() - passwordTextField.getWidth()) / 2, ((internalFrame.getHeight() - passwordTextField.getHeight()) / 2) + 220);
+        registerButton.setFont(font);
+
+
+        // go-back button
+        JButton goBackButton = new JButton("Go back");
+
+        goBackButton.setBounds(0, 0, 250, 45);
+        goBackButton.setLocation((internalFrame.getWidth() - passwordTextField.getWidth()) / 2, ((internalFrame.getHeight() - passwordTextField.getHeight()) / 2) + 270);
+        goBackButton.setFont(font);
 
 
         // remove all the components of the login interface
@@ -145,6 +169,9 @@ public class RegisterInternalFrame {
         internalFrame.add(surnameTextFieldLabel);
         internalFrame.add(usernameTextFieldLabel);
         internalFrame.add(passwordTextFieldLabel);
+
+        internalFrame.add(registerButton);
+        internalFrame.add(goBackButton);
 
 
         // refreshing the internal-frame
@@ -226,5 +253,86 @@ public class RegisterInternalFrame {
                 }
             }
         }));
+
+
+        // return back to log in interface
+        goBackButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                LoginInternalFrame loginInternalFrame = new LoginInternalFrame(internalFrame, users_info);
+            }
+        });
+
+
+        // write new user info on users_info.txt, then log in
+        registerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                String newUserInfo = "\n\n";
+
+                try (BufferedReader inFile = new BufferedReader(new FileReader(users_info));
+                     BufferedWriter outFile = new BufferedWriter(new FileWriter(users_info, true))) {
+
+                    String line = "";
+                    boolean usernameTaken = false;
+
+                    while ((line = inFile.readLine()) != null) {
+                        if (line.contains(usernameTextField.getText())) {
+                            usernameTaken = true;
+                            JOptionPane.showInternalMessageDialog(internalFrame, "Username already taken");
+                        }
+                    }
+
+                    if (!usernameTaken) {
+
+                        // name field
+                        if (!nameTextField.getText().isEmpty() && !nameTextField.getText().equals("Type your name") && nameTextField.getText().length() > 2) {
+                            newUserInfo += "name: " + nameTextField.getText();
+                        } else {
+                            JOptionPane.showInternalMessageDialog(internalFrame, "Name must be at least 3 digits length");
+                            newUserInfo = "";
+                        }
+
+
+                        // surname field
+                        if (!surnameTextField.getText().isEmpty() && !surnameTextField.getText().equals("Type your surname") && surnameTextField.getText().length() > 2) {
+                            newUserInfo += "\nsurname: " + surnameTextField.getText();
+                        } else {
+                            JOptionPane.showInternalMessageDialog(internalFrame, "Surname must be at least 3 digits length");
+                            newUserInfo = "";
+                        }
+
+
+                        // username field
+                        if (!usernameTextField.getText().isEmpty() && !usernameTextField.getText().equals("Type your username") && usernameTextField.getText().length() > 3) {
+                            newUserInfo += "\nusername: " + usernameTextField.getText();
+                        } else {
+                            JOptionPane.showInternalMessageDialog(internalFrame, "Username must be at least 3 digits length");
+                            newUserInfo = "";
+                        }
+
+
+                        // password field
+                        if (!passwordTextField.getText().isEmpty() && !passwordTextField.getText().equals("Type your password") && passwordTextField.getText().length() > 7) {
+                            newUserInfo += "\npassword: " + passwordTextField.getText();
+                        } else {
+                            JOptionPane.showInternalMessageDialog(internalFrame, "Password length must be at least 8 digits length");
+                            newUserInfo = "";
+                        }
+
+
+                        // writing to users_info.txt
+                        if (!newUserInfo.isEmpty()) {
+                            outFile.write(newUserInfo);
+                            outFile.flush();
+                        }
+                    }
+
+                } catch (IOException exc) {
+                    System.err.println("error");
+                }
+            }
+        });
     }
 }

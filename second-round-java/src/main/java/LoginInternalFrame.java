@@ -3,12 +3,13 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.*;
 
-import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
 import java.io.BufferedReader;
 
 public class LoginInternalFrame {
 
-    LoginInternalFrame(JInternalFrame internalFrame, BufferedWriter outFile, BufferedReader inFile) {
+    LoginInternalFrame(JInternalFrame internalFrame, File users_info) {
 
         // setting login window title
         internalFrame.setTitle("Login");
@@ -109,6 +110,10 @@ public class LoginInternalFrame {
         rememberMe.setFont(new Font("Arial", Font.PLAIN, 14));
 
 
+        // remove all the components of the register interface
+        internalFrame.getContentPane().removeAll();
+
+
         // adding components to the login internal-frame
         internalFrame.add(loginMainTitle);
 
@@ -122,6 +127,11 @@ public class LoginInternalFrame {
         internalFrame.add(registerButton);
 
         internalFrame.add(rememberMe);
+
+
+        // refreshing the internal-frame
+        internalFrame.revalidate();
+        internalFrame.repaint();
 
 
         // setting the internal-frame visible
@@ -141,7 +151,7 @@ public class LoginInternalFrame {
         registerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                RegisterInternalFrame registerInternalFrame = new RegisterInternalFrame(internalFrame, outFile, inFile);
+                RegisterInternalFrame registerInternalFrame = new RegisterInternalFrame(internalFrame, users_info);
             }
         });
 

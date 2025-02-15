@@ -1,23 +1,14 @@
-import java.io.FileWriter;
+import java.util.ArrayList;
 
 public class BankAccount {
     private double balance;
-    private User user;
-    private String ID;
-
+    private final String ID;
+    private ArrayList<Transaction> transactions;
     private static int bankAccountCounterID = 100;
 
 
     // default constructor
     BankAccount() {
-        this.user = null;
-        this.balance = 0.0;
-        this.ID = String.valueOf(bankAccountCounterID);
-        bankAccountCounterID++;
-    }
-
-    BankAccount(User user) {
-        this.user = user;
         this.balance = Math.round((Math.random() * 1000) * 100.0) / 100.0; // random decimal number between 0 and 999.99
         this.ID = String.valueOf(bankAccountCounterID);
         bankAccountCounterID++;
@@ -40,9 +31,5 @@ public class BankAccount {
 
     public double getBalance() {
         return balance;
-    }
-
-    public User getUser() {
-        return user;
     }
 }

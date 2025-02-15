@@ -1,15 +1,17 @@
 import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 
 import javax.swing.*;
 import java.awt.*;
 
+import java.io.File;
+import java.io.FileReader;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 
 public class MainFrame {
 
-    MainFrame(BankAccount b, BufferedWriter outFile, BufferedReader inFile) {
+    MainFrame(User u, File users_info) {
 
         // default app look
 //        try {
@@ -19,19 +21,15 @@ public class MainFrame {
 //        }
 
 
-        // light app look
-//        try {
-//            UIManager.setLookAndFeel(new FlatLightLaf());
-//        } catch (Exception e) {
-//            System.err.println("LaF initialization failed");
+        // light theme
+//        if (!FlatLightLaf.setup()) {
+//            System.err.println("Laf Initialization failed");
 //        }
 
 
-        // dark app look
-        try {
-            UIManager.setLookAndFeel(new FlatDarkLaf());
-        } catch (Exception e) {
-            System.err.println("LaF initialization failed");
+        // black theme
+        if (!FlatDarkLaf.setup()) {
+            System.err.println("Laf Initialization failed");
         }
 
 
@@ -45,13 +43,13 @@ public class MainFrame {
 
 
         // check if there is a default user
-        try {
+        try (BufferedReader inFile = new BufferedReader(new FileReader(users_info))) {
 
             // if there is not a defined user, then launch the login window
             if (inFile.readLine().equals("default: ")) {
 
                 // instantiating the main-sub-frame
-                InternalFrame internalFrame = new InternalFrame(mainFrame, outFile, inFile);
+                InternalFrame internalFrame = new InternalFrame(mainFrame, users_info);
             }
         } catch (IOException e) {
             System.out.println("error");
@@ -65,7 +63,7 @@ public class MainFrame {
         // current balance display
         JTextField balanceDisplay = new JTextField();
 
-        balanceDisplay.setText(String.valueOf(b.getBalance()));
+        balanceDisplay.setText(String.valueOf(u.getBankAccount().getBalance()));
         balanceDisplay.setBounds(800, 25, 100, 50);
         balanceDisplay.setFont(font);
         balanceDisplay.setEditable(false);
@@ -103,7 +101,7 @@ public class MainFrame {
         JLabel profileLabel = new JLabel();
 
         profileLabel.setBounds(10, 10, 500, 300);
-        profileLabel.setText(b.getUser().toString().toUpperCase());
+        profileLabel.setText(u.toString());
         profileLabel.setIcon(profileAvatar);
         profileLabel.setHorizontalTextPosition(JLabel.RIGHT);
         profileLabel.setVerticalTextPosition(JLabel.CENTER);

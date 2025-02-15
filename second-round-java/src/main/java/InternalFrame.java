@@ -1,14 +1,12 @@
 import javax.swing.*;
-
-import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentAdapter;
 
-import java.io.BufferedWriter;
-import java.io.BufferedReader;
+import java.io.File;
 
 public class InternalFrame {
 
-    InternalFrame(JFrame mainFrame, BufferedWriter outFile, BufferedReader inFile) {
+    InternalFrame(JFrame mainFrame, File users_info) {
 
         // initialising the sub-frames container
         JDesktopPane subWindowPane = new JDesktopPane();
@@ -41,25 +39,25 @@ public class InternalFrame {
         internalFrame.setFrameIcon(titleBarLogo);
 
 
-        // instantiating login interface -> the default sub-frame displayed if default is missing
-        LoginInternalFrame loginInternalFrame = new LoginInternalFrame(internalFrame, outFile, inFile);
+        // instantiating login interface -> the default sub-frame displayed if default user is missing
+        LoginInternalFrame loginInternalFrame = new LoginInternalFrame(internalFrame, users_info);
 
 
         // everytime the main-frame is resized, the internal-frame is re-centered
         mainFrame.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                int x = (mainFrame.getWidth() - internalFrame.getWidth()) / 2;
-                int y = (mainFrame.getHeight() - internalFrame.getHeight()) / 2;
+                int xA = (mainFrame.getWidth() - internalFrame.getWidth()) / 2;
+                int yA = (mainFrame.getHeight() - internalFrame.getHeight()) / 2;
 
-                internalFrame.setLocation(x, y);
+                internalFrame.setLocation(xA, yA);
 
 
                 // everytime the main-frame is resized, the subWindowPane is resized too
-                x = mainFrame.getWidth();
-                y = mainFrame.getHeight();
+                int xB = mainFrame.getWidth();
+                int yB = mainFrame.getHeight();
 
-                subWindowPane.setBounds(0, 0, x, y);
+                subWindowPane.setBounds(0, 0, xB, yB);
             }
         });
 
