@@ -2,13 +2,13 @@ import java.io.*;
 
 public class StartApp {
 
-    StartApp(User user) {
+    StartApp() {
 
         // users_info.txt initialisation
-        String filePath = "src/main/resources/users_info.txt";
+        String filePath = "second-round-java/src/main/resources/users_info.txt";
 
 
-        // file abstraction
+        // file initialization
         File users_info = new File(filePath);
 
 
@@ -24,14 +24,14 @@ public class StartApp {
 
                 System.out.println("file created");
             } else {
-                System.out.println("impossible to create file");
+                System.out.println("file already exists");
             }
         } catch (IOException e) {
-            System.out.println("error");
+            System.out.println("file creation failed");
         }
 
 
-        // instancing main frame
-        MainFrame mainFrame = new MainFrame(user, users_info);
+        // instancing main frame for authentication
+        MainFrame authenticateMainFrame = new MainFrame(users_info);
     }
 }

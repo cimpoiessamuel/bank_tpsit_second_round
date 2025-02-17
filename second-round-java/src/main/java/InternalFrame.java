@@ -35,12 +35,12 @@ public class InternalFrame {
 
 
         // initializing the title-bar icon
-        ImageIcon titleBarLogo = new ImageIcon("src/main/resources/vBank2-rounded-16x16.png");
+        ImageIcon titleBarLogo = new ImageIcon("second-round-java/src/main/resources/vBank2-rounded-16x16.png");
         internalFrame.setFrameIcon(titleBarLogo);
 
 
         // instantiating login interface -> the default sub-frame displayed if default user is missing
-        LoginInternalFrame loginInternalFrame = new LoginInternalFrame(internalFrame, users_info);
+        LoginInternalFrame loginInternalFrame = new LoginInternalFrame(mainFrame, internalFrame, users_info);
 
 
         // everytime the main-frame is resized, the internal-frame is re-centered

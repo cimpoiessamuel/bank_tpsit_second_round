@@ -12,13 +12,14 @@ import java.io.IOException;
 
 public class RegisterInternalFrame {
 
-    RegisterInternalFrame(JInternalFrame internalFrame, File users_info) {
+    RegisterInternalFrame(JFrame loginSignInMainFrame, JInternalFrame internalFrame, File users_info) {
 
         // setting login window title
         internalFrame.setTitle("Register");
 
+
         // register window logo
-        ImageIcon loginBankLogo = new ImageIcon("src/main/resources/vBank2-rounded.png");
+        ImageIcon loginBankLogo = new ImageIcon("second-round-java/src/main/resources/vBank2-rounded.png");
 
 
         // initialising sign-in title
@@ -41,11 +42,18 @@ public class RegisterInternalFrame {
         Font font = new Font("Arial", Font.PLAIN, 16);
 
 
+        // place-holders
+        String nameTextFieldPlaceHolder = "Type your name";
+        String surnameTextFieldPlaceHolder = "Type your surname";
+        String usernameTextFieldPlaceHolder = "Type your username";
+        String passwordTextFieldPlaceHolder = "Type your password";
+
+
         // initialising name text-field
         JTextField nameTextField = new JTextField();
 
         nameTextField.setBounds(0, 0, 250, 45);
-        nameTextField.setText("Type your name");
+        nameTextField.setText(nameTextFieldPlaceHolder);
         nameTextField.setFont(font);
         nameTextField.setEditable(true);
         nameTextField.setHorizontalAlignment(JTextField.CENTER);
@@ -69,7 +77,7 @@ public class RegisterInternalFrame {
         JTextField surnameTextField = new JTextField();
 
         surnameTextField.setBounds(0, 0, 250, 45);
-        surnameTextField.setText("Type your surname");
+        surnameTextField.setText(surnameTextFieldPlaceHolder);
         surnameTextField.setFont(font);
         surnameTextField.setEditable(true);
         surnameTextField.setHorizontalAlignment(JTextField.CENTER);
@@ -93,7 +101,7 @@ public class RegisterInternalFrame {
         JTextField usernameTextField = new JTextField();
 
         usernameTextField.setBounds(0, 0, 250, 45);
-        usernameTextField.setText("Type your username");
+        usernameTextField.setText(usernameTextFieldPlaceHolder);
         usernameTextField.setFont(font);
         usernameTextField.setEditable(true);
         usernameTextField.setHorizontalAlignment(JTextField.CENTER);
@@ -114,14 +122,15 @@ public class RegisterInternalFrame {
 
 
         // initialising password text-field
-        JTextField passwordTextField = new JTextField();
+        JPasswordField passwordTextField = new JPasswordField();
 
         passwordTextField.setBounds(0, 0, 250, 45);
-        passwordTextField.setText("Type your password");
+        passwordTextField.setText(passwordTextFieldPlaceHolder);
         passwordTextField.setFont(font);
         passwordTextField.setEditable(true);
         passwordTextField.setHorizontalAlignment(JTextField.CENTER);
         passwordTextField.setLocation((internalFrame.getWidth() - passwordTextField.getWidth()) / 2, ((internalFrame.getHeight() - passwordTextField.getHeight()) / 2) + 140);
+        passwordTextField.setEchoChar((char) 0);
 
 
         // initialising password text-field border
@@ -135,6 +144,18 @@ public class RegisterInternalFrame {
         passwordTextFieldLabel.setBounds(0, 0, 250, 50);
         passwordTextFieldLabel.setLocation((internalFrame.getWidth() - passwordTextField.getWidth()) / 2, ((internalFrame.getHeight() - passwordTextField.getHeight()) / 2) + 105);
         passwordTextFieldLabel.setFont(font);
+
+
+        // show/hide button imageIcon
+        ImageIcon showPasswordIcon = new ImageIcon("second-round-java/src/main/resources/show-password.png");
+        ImageIcon hidePasswordIcon = new ImageIcon("second-round-java/src/main/resources/hide-password.png");
+
+
+        // show/hide password button
+        JButton showHidePasswordButton = new JButton(hidePasswordIcon);
+
+        showHidePasswordButton.setBounds(0, 0, 45, 45);
+        showHidePasswordButton.setLocation(((internalFrame.getWidth() - passwordTextField.getWidth()) / 2) + 260, ((internalFrame.getHeight() - passwordTextField.getHeight()) / 2) + 140);
 
 
         // register button
@@ -153,7 +174,7 @@ public class RegisterInternalFrame {
         goBackButton.setFont(font);
 
 
-        // remove all the components of the login interface
+        // remove all the components of the previous login interface
         internalFrame.getContentPane().removeAll();
 
 
@@ -172,6 +193,7 @@ public class RegisterInternalFrame {
 
         internalFrame.add(registerButton);
         internalFrame.add(goBackButton);
+        internalFrame.add(showHidePasswordButton);
 
 
         // refreshing the internal-frame
@@ -183,11 +205,106 @@ public class RegisterInternalFrame {
         internalFrame.setVisible(true);
 
 
+        // write new user info on users_info.txt, then log in
+        registerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                try (BufferedReader inFile = new BufferedReader(new FileReader(users_info));
+                     BufferedWriter outFile = new BufferedWriter(new FileWriter(users_info, true))) {
+
+                    String newUserInfo = "\n\n";
+
+
+                    // username field
+                    if (!usernameTextField.getText().isEmpty() && !usernameTextField.getText().equals(usernameTextFieldPlaceHolder) && usernameTextField.getText().length() > 3) {
+                        newUserInfo += "\nusername: " + usernameTextField.getText();
+                    } else {
+                        JOptionPane.showInternalMessageDialog(internalFrame, "Username must be at least 4 digits long");
+                        return;
+                    }
+
+
+                    // password field
+                    if (!String.valueOf(passwordTextField.getPassword()).isEmpty() && !String.valueOf(passwordTextField.getPassword()).equals(passwordTextFieldPlaceHolder) && passwordTextField.getPassword().length > 7) {
+                        newUserInfo += "\npassword: " + String.valueOf(passwordTextField.getPassword());
+                    } else {
+                        JOptionPane.showInternalMessageDialog(internalFrame, "Password must be at least 8 digits long");
+                        return;
+                    }
+
+
+                    // name field
+                    if (!nameTextField.getText().isEmpty() && !nameTextField.getText().equals(nameTextFieldPlaceHolder) && nameTextField.getText().length() > 2) {
+                        newUserInfo += "\nname: " + nameTextField.getText();
+                    } else {
+                        JOptionPane.showInternalMessageDialog(internalFrame, "Name must be at least 3 digits long");
+                        return;
+                    }
+
+
+                    // surname field
+                    if (!surnameTextField.getText().isEmpty() && !surnameTextField.getText().equals(surnameTextFieldPlaceHolder) && surnameTextField.getText().length() > 2) {
+                        newUserInfo += "\nsurname: " + surnameTextField.getText();
+                    } else {
+                        JOptionPane.showInternalMessageDialog(internalFrame, "Surname must be at least 3 digits long");
+                        return;
+                    }
+
+
+                    // check if the typed username already exists
+                    String line;
+
+                    while ((line = inFile.readLine()) != null) {
+                        if (line.contains(usernameTextField.getText())) {
+                            JOptionPane.showInternalMessageDialog(internalFrame, "Username already taken.\nBanned usernames: \"name\", \"surname\", \"username\", \"password\"");
+                            return;
+                        }
+                    }
+
+
+                    // instancing new registered user
+                    MainFrame.setUser(new User(nameTextField.getText(), surnameTextField.getText(), new BankAccount()));
+
+
+                    // closing the login/sign-in window
+                    loginSignInMainFrame.dispose();
+
+
+                    // instancing main frame for effective use
+                    MainFrame realMainFrame = new MainFrame();
+
+
+                    // writing in users_info.txt
+                    outFile.write(newUserInfo);
+                    outFile.flush();
+
+
+                    //
+                    internalFrame.dispose();
+
+
+                } catch (IOException exc) {
+                    System.err.println("writing on file error");
+                }
+            }
+        });
+
+
+        // return back to log in interface
+        goBackButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                LoginInternalFrame loginInternalFrame = new LoginInternalFrame(loginSignInMainFrame, internalFrame, users_info);
+            }
+        });
+
+
         // name text-field placeholder
-        nameTextField.addFocusListener((new FocusAdapter() {
+        nameTextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
-                if (nameTextField.getText().equals("Type your name")) {
+                if (nameTextField.getText().equals(nameTextFieldPlaceHolder)) {
                     nameTextField.setText("");
                 }
             }
@@ -195,17 +312,17 @@ public class RegisterInternalFrame {
             @Override
             public void focusLost(FocusEvent e) {
                 if (nameTextField.getText().isEmpty()) {
-                    nameTextField.setText("Type your name");
+                    nameTextField.setText(nameTextFieldPlaceHolder);
                 }
             }
-        }));
+        });
 
 
         // surname text-field placeholder
-        surnameTextField.addFocusListener((new FocusAdapter() {
+        surnameTextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
-                if (surnameTextField.getText().equals("Type your surname")) {
+                if (surnameTextField.getText().equals(surnameTextFieldPlaceHolder)) {
                     surnameTextField.setText("");
                 }
             }
@@ -213,17 +330,17 @@ public class RegisterInternalFrame {
             @Override
             public void focusLost(FocusEvent e) {
                 if (surnameTextField.getText().isEmpty()) {
-                    surnameTextField.setText("Type your surname");
+                    surnameTextField.setText(surnameTextFieldPlaceHolder);
                 }
             }
-        }));
+        });
 
 
         // username text-field placeholder
-        usernameTextField.addFocusListener((new FocusAdapter() {
+        usernameTextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
-                if (usernameTextField.getText().equals("Type your username")) {
+                if (usernameTextField.getText().equals(usernameTextFieldPlaceHolder)) {
                     usernameTextField.setText("");
                 }
             }
@@ -231,106 +348,47 @@ public class RegisterInternalFrame {
             @Override
             public void focusLost(FocusEvent e) {
                 if (usernameTextField.getText().isEmpty()) {
-                    usernameTextField.setText("Type your username");
+                    usernameTextField.setText(usernameTextFieldPlaceHolder);
                 }
             }
-        }));
+        });
 
 
         // password text-field placeholder
-        passwordTextField.addFocusListener((new FocusAdapter() {
+        passwordTextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
-                if (passwordTextField.getText().equals("Type your password")) {
+                if (String.valueOf(passwordTextField.getPassword()).equals(passwordTextFieldPlaceHolder)) {
                     passwordTextField.setText("");
+                    passwordTextField.setEchoChar('*');
                 }
             }
 
             @Override
             public void focusLost(FocusEvent e) {
-                if (passwordTextField.getText().isEmpty()) {
-                    passwordTextField.setText("Type your password");
+                if (passwordTextField.getPassword().length == 0) {
+                    passwordTextField.setEchoChar((char) 0);
+                    passwordTextField.setText(passwordTextFieldPlaceHolder);
+                    showHidePasswordButton.setIcon(hidePasswordIcon);
                 }
-            }
-        }));
-
-
-        // return back to log in interface
-        goBackButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                LoginInternalFrame loginInternalFrame = new LoginInternalFrame(internalFrame, users_info);
             }
         });
 
 
-        // write new user info on users_info.txt, then log in
-        registerButton.addActionListener(new ActionListener() {
+        // show/hide password
+        showHidePasswordButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (String.valueOf(passwordTextField.getPassword()).equals(passwordTextFieldPlaceHolder)) {
+                    return;
+                }
 
-                String newUserInfo = "\n\n";
-
-                try (BufferedReader inFile = new BufferedReader(new FileReader(users_info));
-                     BufferedWriter outFile = new BufferedWriter(new FileWriter(users_info, true))) {
-
-                    String line = "";
-                    boolean usernameTaken = false;
-
-                    while ((line = inFile.readLine()) != null) {
-                        if (line.contains(usernameTextField.getText())) {
-                            usernameTaken = true;
-                            JOptionPane.showInternalMessageDialog(internalFrame, "Username already taken");
-                        }
-                    }
-
-                    if (!usernameTaken) {
-
-                        // name field
-                        if (!nameTextField.getText().isEmpty() && !nameTextField.getText().equals("Type your name") && nameTextField.getText().length() > 2) {
-                            newUserInfo += "name: " + nameTextField.getText();
-                        } else {
-                            JOptionPane.showInternalMessageDialog(internalFrame, "Name must be at least 3 digits length");
-                            newUserInfo = "";
-                        }
-
-
-                        // surname field
-                        if (!surnameTextField.getText().isEmpty() && !surnameTextField.getText().equals("Type your surname") && surnameTextField.getText().length() > 2) {
-                            newUserInfo += "\nsurname: " + surnameTextField.getText();
-                        } else {
-                            JOptionPane.showInternalMessageDialog(internalFrame, "Surname must be at least 3 digits length");
-                            newUserInfo = "";
-                        }
-
-
-                        // username field
-                        if (!usernameTextField.getText().isEmpty() && !usernameTextField.getText().equals("Type your username") && usernameTextField.getText().length() > 3) {
-                            newUserInfo += "\nusername: " + usernameTextField.getText();
-                        } else {
-                            JOptionPane.showInternalMessageDialog(internalFrame, "Username must be at least 3 digits length");
-                            newUserInfo = "";
-                        }
-
-
-                        // password field
-                        if (!passwordTextField.getText().isEmpty() && !passwordTextField.getText().equals("Type your password") && passwordTextField.getText().length() > 7) {
-                            newUserInfo += "\npassword: " + passwordTextField.getText();
-                        } else {
-                            JOptionPane.showInternalMessageDialog(internalFrame, "Password length must be at least 8 digits length");
-                            newUserInfo = "";
-                        }
-
-
-                        // writing to users_info.txt
-                        if (!newUserInfo.isEmpty()) {
-                            outFile.write(newUserInfo);
-                            outFile.flush();
-                        }
-                    }
-
-                } catch (IOException exc) {
-                    System.err.println("error");
+                if (showHidePasswordButton.getIcon() == hidePasswordIcon) {
+                    showHidePasswordButton.setIcon(showPasswordIcon);
+                    passwordTextField.setEchoChar((char) 0);
+                } else {
+                    showHidePasswordButton.setIcon(hidePasswordIcon);
+                    passwordTextField.setEchoChar('*');
                 }
             }
         });

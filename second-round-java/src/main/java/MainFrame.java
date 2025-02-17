@@ -1,5 +1,4 @@
 import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.FlatLightLaf;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,7 +10,11 @@ import java.io.IOException;
 
 public class MainFrame {
 
-    MainFrame(User u, File users_info) {
+    public static User user;
+
+
+    // main-frame instanced fot effective use
+    MainFrame() {
 
         // default app look
 //        try {
@@ -42,20 +45,6 @@ public class MainFrame {
         mainFrame.setLocationRelativeTo(null);
 
 
-        // check if there is a default user
-        try (BufferedReader inFile = new BufferedReader(new FileReader(users_info))) {
-
-            // if there is not a defined user, then launch the login window
-            if (inFile.readLine().equals("default: ")) {
-
-                // instantiating the main-sub-frame
-                InternalFrame internalFrame = new InternalFrame(mainFrame, users_info);
-            }
-        } catch (IOException e) {
-            System.out.println("error");
-        }
-
-
         // main frame font
         Font font = new Font("Arial", Font.PLAIN, 20);
 
@@ -63,7 +52,7 @@ public class MainFrame {
         // current balance display
         JTextField balanceDisplay = new JTextField();
 
-        balanceDisplay.setText(String.valueOf(u.getBankAccount().getBalance()));
+        balanceDisplay.setText(String.valueOf(user.getBankAccount().getBalance()));
         balanceDisplay.setBounds(800, 25, 100, 50);
         balanceDisplay.setFont(font);
         balanceDisplay.setEditable(false);
@@ -94,14 +83,14 @@ public class MainFrame {
 
 
         // profile ImageIcon
-        ImageIcon profileAvatar = new ImageIcon("src/main/resources/default_user_avatar_100x100_rounded.png");
+        ImageIcon profileAvatar = new ImageIcon("second-round-java/src/main/resources/default_user_avatar_100x100_rounded.png");
 
 
         // profile section container
         JLabel profileLabel = new JLabel();
 
         profileLabel.setBounds(10, 10, 500, 300);
-        profileLabel.setText(u.toString());
+        profileLabel.setText(user.toString());
         profileLabel.setIcon(profileAvatar);
         profileLabel.setHorizontalTextPosition(JLabel.RIGHT);
         profileLabel.setVerticalTextPosition(JLabel.CENTER);
@@ -117,8 +106,63 @@ public class MainFrame {
         mainFrame.add(balanceModifier);
 
 
+        // setting the internal-frame visible
+        mainFrame.setVisible(true);
+    }
+
+
+    // main-frame instanced for authentication
+    MainFrame(File users_info) {
+
+        // default app look
+//        try {
+//            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
+
+        // light theme
+//        if (!FlatLightLaf.setup()) {
+//            System.err.println("Laf Initialization failed");
+//        }
+
+
+        // black theme
+        if (!FlatDarkLaf.setup()) {
+            System.err.println("Laf Initialization failed");
+        }
+
+
+        // initialising main frame
+        JFrame mainFrame = new JFrame("Volksbank Authentication");
+
+        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainFrame.setSize(1600, 1024);
+        mainFrame.setLayout(null);
+        mainFrame.setLocationRelativeTo(null);
+
+
         // set main-frame visible
         mainFrame.setVisible(true);
+
+
+        // check if there is a default user
+        try (BufferedReader inFile = new BufferedReader(new FileReader(users_info))) {
+
+            // if there is not a defined user, then launch the login window
+            if (inFile.readLine().equals("default: ")) {
+
+                // instantiating the main-sub-frame
+                InternalFrame internalFrame = new InternalFrame(mainFrame, users_info);
+            }
+        } catch (IOException e) {
+            System.err.println("error");
+        }
+    }
+
+    public static void setUser(User u) {
+        user = u;
     }
 
 //    @Override

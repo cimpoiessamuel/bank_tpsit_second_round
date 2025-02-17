@@ -3,19 +3,18 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.*;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.BufferedReader;
+import java.io.*;
 
 public class LoginInternalFrame {
 
-    LoginInternalFrame(JInternalFrame internalFrame, File users_info) {
+    LoginInternalFrame(JFrame loginSignInMainFrame, JInternalFrame internalFrame, File users_info) {
 
         // setting login window title
         internalFrame.setTitle("Login");
 
+
         // login window logo
-        ImageIcon loginBankLogo = new ImageIcon("src/main/resources/vBank2-rounded.png");
+        ImageIcon loginBankLogo = new ImageIcon("second-round-java/src/main/resources/vBank2-rounded.png");
 
 
         // initialising login title
@@ -38,11 +37,16 @@ public class LoginInternalFrame {
         Font font = new Font("Arial", Font.PLAIN, 16);
 
 
+        // place-holders
+        String usernameTextFieldPlaceHolder = "Type your username";
+        String passwordTextFieldPlaceHolder = "Type your password";
+
+
         // initialising username text-field
         JTextField usernameTextField = new JTextField();
 
         usernameTextField.setBounds(0, 0, 250, 45);
-        usernameTextField.setText("Type your username");
+        usernameTextField.setText(usernameTextFieldPlaceHolder);
         usernameTextField.setFont(font);
         usernameTextField.setEditable(true);
         usernameTextField.setHorizontalAlignment(JTextField.CENTER);
@@ -63,14 +67,15 @@ public class LoginInternalFrame {
 
 
         // initialising password text-field
-        JTextField passwordTextField = new JTextField();
+        JPasswordField passwordTextField = new JPasswordField();
 
         passwordTextField.setBounds(0, 0, 250, 45);
-        passwordTextField.setText("Type your password");
+        passwordTextField.setText(passwordTextFieldPlaceHolder);
         passwordTextField.setFont(font);
         passwordTextField.setEditable(true);
         passwordTextField.setHorizontalAlignment(JTextField.CENTER);
         passwordTextField.setLocation((internalFrame.getWidth() - passwordTextField.getWidth()) / 2, (internalFrame.getHeight() - passwordTextField.getHeight()) / 2);
+        passwordTextField.setEchoChar((char) 0);
 
 
         // initialising password text-field border
@@ -86,6 +91,18 @@ public class LoginInternalFrame {
         passwordTextFieldLabel.setFont(font);
 
 
+        // show/hide button imageIcon
+        ImageIcon showPasswordIcon = new ImageIcon("second-round-java/src/main/resources/show-password.png");
+        ImageIcon hidePasswordIcon = new ImageIcon("second-round-java/src/main/resources/hide-password.png");
+
+
+        // show/hide password button
+        JButton showHidePasswordButton = new JButton(hidePasswordIcon);
+
+        showHidePasswordButton.setBounds(0, 0, 45, 45);
+        showHidePasswordButton.setLocation(((internalFrame.getWidth() - passwordTextField.getWidth()) / 2) + 260, ((internalFrame.getHeight() - passwordTextField.getHeight()) / 2));
+
+
         // login button
         JButton loginButton = new JButton("Login");
 
@@ -95,7 +112,7 @@ public class LoginInternalFrame {
 
 
         // register button
-        JButton registerButton = new JButton("Not a member? Register now");
+        JButton registerButton = new JButton("Sign in");
 
         registerButton.setBounds(0, 0, 250, 45);
         registerButton.setLocation((internalFrame.getWidth() - passwordTextField.getWidth()) / 2, ((internalFrame.getHeight() - passwordTextField.getHeight()) / 2) + 150);
@@ -110,7 +127,7 @@ public class LoginInternalFrame {
         rememberMe.setFont(new Font("Arial", Font.PLAIN, 14));
 
 
-        // remove all the components of the register interface
+        // remove all the components of the previous register interface
         internalFrame.getContentPane().removeAll();
 
 
@@ -125,6 +142,7 @@ public class LoginInternalFrame {
 
         internalFrame.add(loginButton);
         internalFrame.add(registerButton);
+        internalFrame.add(showHidePasswordButton);
 
         internalFrame.add(rememberMe);
 
@@ -138,20 +156,37 @@ public class LoginInternalFrame {
         internalFrame.setVisible(true);
 
 
-        //
+        // log-in inside your account
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                try (BufferedReader inFile = new BufferedReader(new FileReader(users_info))) {
+                    String line;
 
+                    while ((line = inFile.readLine()) != null) {
+                        if (line.contains(usernameTextField.getText())) {
+                            line = inFile.readLine();
+
+                            if (line.contains(String.valueOf(passwordTextField.getPassword()))) {
+                                String name = inFile.readLine();
+                                String surname = inFile.readLine();
+
+                                //MainFrame.setUser(new User(name, surname, new BankAccount()));
+                            }
+                        }
+                    }
+                } catch (IOException exc) {
+                    System.err.println("login failure");
+                }
             }
         });
 
 
-        //
+        // switch to the sign-in interface
         registerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                RegisterInternalFrame registerInternalFrame = new RegisterInternalFrame(internalFrame, users_info);
+                RegisterInternalFrame registerInternalFrame = new RegisterInternalFrame(loginSignInMainFrame, internalFrame, users_info);
             }
         });
 
@@ -160,7 +195,7 @@ public class LoginInternalFrame {
         usernameTextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
-                if (usernameTextField.getText().equals("Type your username")) {
+                if (usernameTextField.getText().equals(usernameTextFieldPlaceHolder)) {
                     usernameTextField.setText("");
                 }
             }
@@ -168,7 +203,7 @@ public class LoginInternalFrame {
             @Override
             public void focusLost(FocusEvent e) {
                 if (usernameTextField.getText().isEmpty()) {
-                    usernameTextField.setText("Type your username");
+                    usernameTextField.setText(usernameTextFieldPlaceHolder);
                 }
             }
         });
@@ -178,15 +213,37 @@ public class LoginInternalFrame {
         passwordTextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
-                if (passwordTextField.getText().equals("Type your password")) {
+                if (String.valueOf(passwordTextField.getPassword()).equals(passwordTextFieldPlaceHolder)) {
                     passwordTextField.setText("");
+                    passwordTextField.setEchoChar('*');
                 }
             }
 
             @Override
             public void focusLost(FocusEvent e) {
-                if (passwordTextField.getText().isEmpty()) {
-                    passwordTextField.setText("Type your password");
+                if (passwordTextField.getPassword().length == 0) {
+                    passwordTextField.setEchoChar((char) 0);
+                    passwordTextField.setText(passwordTextFieldPlaceHolder);
+                    showHidePasswordButton.setIcon(hidePasswordIcon);
+                }
+            }
+        });
+
+
+        // show/hide password
+        showHidePasswordButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (String.valueOf(passwordTextField.getPassword()).equals(passwordTextFieldPlaceHolder)) {
+                    return;
+                }
+
+                if (showHidePasswordButton.getIcon() == hidePasswordIcon) {
+                    showHidePasswordButton.setIcon(showPasswordIcon);
+                    passwordTextField.setEchoChar((char) 0);
+                } else {
+                    showHidePasswordButton.setIcon(hidePasswordIcon);
+                    passwordTextField.setEchoChar('*');
                 }
             }
         });
