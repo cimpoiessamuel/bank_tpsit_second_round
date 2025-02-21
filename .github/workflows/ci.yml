@@ -17,11 +17,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Set up Java (adjust the version as needed)
+      # Set up Java
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
+          java-version: '23'
           distribution: 'temurin'
 
       # Cache Maven dependencies to speed up builds
@@ -41,7 +41,7 @@ jobs:
   formatting:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4 # v2 minimum required
+      - uses: actions/checkout@v4
       - uses: axel-op/googlejavaformat-action@v3
         with:
           args: "--replace"
