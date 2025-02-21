@@ -17,7 +17,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Set up Java
+      # Set up Java (adjust the version as needed)
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -41,7 +41,7 @@ jobs:
   formatting:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4 # v2 minimum required
       - uses: axel-op/googlejavaformat-action@v3
         with:
           args: "--replace"
