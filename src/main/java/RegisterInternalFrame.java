@@ -265,10 +265,20 @@ public class RegisterInternalFrame {
               String line;
 
               while ((line = inFile.readLine()) != null) {
-                if (line.contains(usernameTextField.getText())) {
+                if (!usernameTextField.getText().equals("name")
+                    && !usernameTextField.getText().equals("surname")
+                    && !usernameTextField.getText().equals("username")
+                    && !usernameTextField.getText().equals("password")) {
+                  if (!line.isEmpty()
+                      && (line.split(";")[0].equals("username")
+                          && line.split(";")[1].equals(usernameTextField.getText()))) {
+                    JOptionPane.showInternalMessageDialog(internalFrame, "Username already taken");
+                    return;
+                  }
+                } else {
                   JOptionPane.showInternalMessageDialog(
                       internalFrame,
-                      "Username already taken.\nBanned usernames: \"name\", \"surname\", \"username\", \"password\"");
+                      "Banned usernames: \"name\", \"surname\", \"username\", \"password\"");
                   return;
                 }
               }

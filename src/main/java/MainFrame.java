@@ -39,7 +39,8 @@ public class MainFrame {
     mainFrame.setSize(1600, 1024);
     mainFrame.setLayout(null);
     mainFrame.setLocationRelativeTo(null);
-    setIcon(mainFrame);
+    mainFrame.setIconImage(
+        new ImageIcon("src/main/resources/images/vBank2-rounded-16x16.png").getImage());
 
     // main frame font
     Font font = new Font("Arial", Font.PLAIN, 20);
@@ -126,7 +127,8 @@ public class MainFrame {
     mainFrame.setSize(1600, 1024);
     mainFrame.setLayout(null);
     mainFrame.setLocationRelativeTo(null);
-    setIcon(mainFrame);
+    mainFrame.setIconImage(
+        new ImageIcon("src/main/resources/images/vBank2-rounded-16x16.png").getImage());
 
     // set main-frame visible
     mainFrame.setVisible(true);
@@ -151,11 +153,6 @@ public class MainFrame {
 
   public static void setUser(User u) {
     sessionUser = u;
-  }
-
-  private void setIcon(JFrame mainFrame) {
-    mainFrame.setIconImage(
-        new ImageIcon("src/main/resources/images/vBank2-rounded-16x16.png").getImage());
   }
 
   //    @Override

@@ -167,13 +167,16 @@ public class LoginInternalFrame {
                 String userUsername;
                 String userPassword;
 
-                if (((userUsername = line).contains(usernameTextField.getText()))
-                    && ((userPassword = line = inFile.readLine())
-                        .contains(String.valueOf(passwordTextField.getPassword())))) {
+                if ((!((userUsername = line).isEmpty()) && !(line.equals("default;")))
+                    && ((userUsername.split(";")[1].equals(usernameTextField.getText()))
+                        && (userPassword = line = inFile.readLine())
+                            .split(";")[1].equals(
+                                String.valueOf(passwordTextField.getPassword())))) {
 
                   //
                   userUsername = userUsername.split(";")[1];
                   userPassword = userPassword.split(";")[1];
+
                   String userName = (line = inFile.readLine()).split(";")[1];
                   String userSurname = (line = inFile.readLine()).split(";")[1];
 
