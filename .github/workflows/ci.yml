@@ -54,4 +54,4 @@ jobs:
           git push
 
       - name: Build with Maven
-        run: mvn clean package -DskipTests
+        run: mvn clean package
