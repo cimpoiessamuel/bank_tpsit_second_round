@@ -1,6 +1,7 @@
 import com.formdev.flatlaf.FlatDarkLaf;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 
 import java.io.File;
@@ -34,10 +35,9 @@ public class MainFrame {
 
     // initialising main frame
     JFrame mainFrame = new JFrame("Bank App");
-
     mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     mainFrame.setSize(1600, 1024);
-    mainFrame.setLayout(null);
+    mainFrame.setLayout(new BorderLayout());
     mainFrame.setLocationRelativeTo(null);
     mainFrame.setIconImage(
         new ImageIcon("src/main/resources/images/vBank2-rounded-16x16.png").getImage());
@@ -45,58 +45,34 @@ public class MainFrame {
     // main frame font
     Font font = new Font("Arial", Font.PLAIN, 20);
 
-    // current balance display
-    JTextField balanceDisplay = new JTextField();
-
-    balanceDisplay.setText(String.valueOf(sessionUser.getBankAccount().getBalance()));
-    balanceDisplay.setBounds(800, 25, 100, 50);
-    balanceDisplay.setFont(font);
-    balanceDisplay.setEditable(false);
-    balanceDisplay.setFocusable(false);
-
-    // balance modifier
-    JTextField balanceModifier = new JTextField();
-
-    balanceModifier.setBounds(512, 800, 100, 50);
-    balanceModifier.setFont(font);
-    balanceModifier.setEditable(true);
-    balanceModifier.setFocusable(true);
-
-    // deposit button
-    JButton deposit = new JButton("Deposit");
-
-    deposit.setFocusable(false);
-    deposit.setBounds(150, 430, 100, 50);
-
-    // withdraw button
-    JButton withdraw = new JButton("Withdraw");
-
-    withdraw.setFocusable(false);
-    withdraw.setBounds(250, 430, 100, 50);
-
     // profile ImageIcon
     ImageIcon profileAvatar =
         new ImageIcon("src/main/resources/images/default_user_avatar_100x100_rounded.png");
 
-    // profile section container
+    // profile label
     JLabel profileLabel = new JLabel();
-
     profileLabel.setBounds(10, 10, 500, 300);
     profileLabel.setText(sessionUser.toString());
     profileLabel.setIcon(profileAvatar);
     profileLabel.setHorizontalTextPosition(JLabel.RIGHT);
     profileLabel.setVerticalTextPosition(JLabel.CENTER);
 
+    // log-out button
+    JButton logoutButton = new JButton("Log out");
+    logoutButton.setFont(font);
+
+    //
+    JPanel profilePanel = new JPanel();
+    profilePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+    profilePanel.setBackground(Color.RED);
+
+    profilePanel.add(profileLabel);
+    profilePanel.add(logoutButton);
+
     // adding components to the main frame
-    mainFrame.add(profileLabel);
+    mainFrame.add(profilePanel, BorderLayout.NORTH);
 
-    mainFrame.add(deposit);
-    mainFrame.add(withdraw);
-
-    mainFrame.add(balanceDisplay);
-    mainFrame.add(balanceModifier);
-
-    // setting the internal-frame visible
+    // setting the main-frame visible
     mainFrame.setVisible(true);
   }
 
