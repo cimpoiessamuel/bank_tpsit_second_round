@@ -1,7 +1,4 @@
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 public class User {
   private String name;
@@ -55,10 +52,17 @@ public class User {
                 + ".csv");
 
     // for each user, a stats file is defined
-    try (BufferedWriter outFile = new BufferedWriter(new FileWriter(this.stats))) {
-
+    try {
       //
       if (this.stats.createNewFile()) {
+        try (BufferedWriter outFile = new BufferedWriter(new FileWriter(this.stats))) {
+          //
+          outFile.write("balance;" + bankAccount.getBalance());
+          outFile.write("\nwallet;" + wallet);
+          outFile.write("\nname;" + name);
+          outFile.write("\nsurname;" + surname);
+        }
+
         System.out.println("users stats created");
       } else {
         System.out.println("users stats already exists");
@@ -77,8 +81,28 @@ public class User {
     return name;
   }
 
+  public void setName(String name) {
+    this.name = name;
+  }
+
   public String getSurname() {
     return surname;
+  }
+
+  public void setSurname(String surname) {
+    this.surname = surname;
+  }
+
+  public double getWallet() {
+    return wallet;
+  }
+
+  public void setWallet(double wallet) {
+    this.wallet = wallet;
+  }
+
+  public File getFile() {
+    return stats;
   }
 
   public String getUsername() {

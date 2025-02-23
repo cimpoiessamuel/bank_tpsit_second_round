@@ -135,6 +135,18 @@ public class LoginInternalFrame {
                                   + userUsername
                                   + ".csv")));
 
+                  try (BufferedReader inInFile =
+                      new BufferedReader(new FileReader(MainFrame.getSessionUser().getFile()))) {
+                    //
+                    MainFrame.getSessionUser()
+                        .getBankAccount()
+                        .setBalance(Double.parseDouble(inInFile.readLine().split(";")[1]));
+
+                    //
+                    MainFrame.getSessionUser()
+                        .setWallet(Double.parseDouble(inInFile.readLine().split(";")[1]));
+                  }
+
                   // closing the login/sign-in window
                   loginSignInMainFrame.dispose();
 

@@ -33,17 +33,34 @@ public class MainFrame {
     // main frame font
     Font font = new Font("Arial", Font.PLAIN, 20);
 
-    // profile ImageIcon
-    ImageIcon profileAvatar =
-        new ImageIcon("src/main/resources/images/default_user_avatar_80x80_rounded.png");
+    // profile panel
+    JPanel profilePanel = new JPanel();
+    profilePanel.setLayout(new BorderLayout());
+    profilePanel.setBackground(new Color(0, 0, 0, 0));
+    profilePanel.setPreferredSize(new Dimension(mainFrame.getWidth(), mainFrame.getHeight() / 9));
 
     // profile label
     JLabel profileLabel = new JLabel();
     profileLabel.setText(sessionUser.toString());
-    profileLabel.setIcon(profileAvatar);
+    profileLabel.setIcon(
+        new ImageIcon("src/main/resources/images/default_user_avatar_80x80_rounded.png"));
     profileLabel.setFont(font);
     profileLabel.setHorizontalTextPosition(JLabel.RIGHT);
     profileLabel.setVerticalTextPosition(JLabel.CENTER);
+
+    // balance label
+    JLabel balanceDisplay = new JLabel();
+    balanceDisplay.setText(
+        "Balance   "
+            + sessionUser.getBankAccount().getBalance()
+            + "         Wallet   "
+            + sessionUser.getWallet());
+    balanceDisplay.setFont(font);
+    balanceDisplay.setHorizontalAlignment(JLabel.CENTER);
+
+    // adding to profile panel
+    profilePanel.add(profileLabel, BorderLayout.WEST);
+    profilePanel.add(balanceDisplay, BorderLayout.SOUTH);
 
     //
     JPanel actionsPanel = new JPanel();
@@ -102,15 +119,20 @@ public class MainFrame {
           @Override
           protected void paintComponent(Graphics g) {
             super.paintComponent(g);
-            ImageIcon icon = new ImageIcon("src/main/resources/images/vBank1-nobg.png");
             g.drawImage(
-                icon.getImage(), 0, 0, mainFrame.getWidth(), mainFrame.getHeight(), mainFrame);
+                new ImageIcon("src/main/resources/images/vBank1-nobg.png").getImage(),
+                0,
+                0,
+                mainFrame.getWidth(),
+                mainFrame.getHeight(),
+                mainFrame);
           }
         };
 
     mainPanel.setLayout(new BorderLayout());
 
-    mainPanel.add(profileLabel, BorderLayout.NORTH);
+    // adding to main panel
+    mainPanel.add(profilePanel, BorderLayout.NORTH);
     mainPanel.add(actionsPanel, BorderLayout.SOUTH);
 
     // adding components to the main frame
@@ -124,7 +146,7 @@ public class MainFrame {
         new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
-            InternalFrame internalFrame = new InternalFrame(mainFrame);
+            // InternalFrame internalFrame = new InternalFrame(mainFrame, mainPanel, "d");
           }
         });
   }
@@ -133,7 +155,7 @@ public class MainFrame {
   MainFrame(File users_info) {
 
     // theme
-    if (!setTheme("black")) {
+    if (!setTheme("white")) {
       System.err.println("theme init failure");
     }
 

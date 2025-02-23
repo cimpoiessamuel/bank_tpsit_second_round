@@ -20,12 +20,12 @@ public class StartApp {
           outFile.flush();
         }
 
-        System.out.println("file created");
+        System.out.println("users-info created");
       } else {
-        System.out.println("file already exists");
+        System.out.println("users-info already exists");
       }
     } catch (IOException e) {
-      System.out.println("file creation failed");
+      System.out.println("users-info creation failed");
     }
 
     // instancing main frame for authentication

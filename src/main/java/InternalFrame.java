@@ -1,7 +1,8 @@
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.awt.event.*;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import javax.swing.*;
 import javax.swing.border.Border;
 
@@ -13,47 +14,52 @@ public class InternalFrame {
   public static String usernameTextFieldPlaceHolder = "Type your username";
   public static String passwordTextFieldPlaceHolder = "Type your password";
 
-  InternalFrame(JFrame mainFrame) {
+  InternalFrame(JFrame mainFrame, JPanel mainPanel, String action) {
 
-    // instancing the internal frame container
-    JDesktopPane subWindowPane = subWindowPaneInit(mainFrame);
+    //
+    Component[] components = mainPanel.getComponents();
 
-    // setting sub-frames container visible
-    subWindowPane.setVisible(true);
+    // remove all the components of the main frame
+    mainFrame.getContentPane().removeAll();
+
+    // initialising internal frames container
+    JDesktopPane subWindowPane = InternalFrame.subWindowPaneInit(mainFrame);
 
     // main internal frame
     JInternalFrame internalFrame = internalFrameInit(subWindowPane);
 
-    // setting internal frame visible
+    //
+    internalFrame.setTitle("Deposit");
+
+    //
+    JTextField balanceModifier =
+        InternalFrame.textFieldInit(internalFrame, "Import to deposit", null, -100);
+
+    //
+    JButton depositButton =
+        InternalFrame.buttonInit(internalFrame, balanceModifier, null, "Deposit", 50);
+
+    //
+    internalFrame.add(balanceModifier);
+    internalFrame.add(depositButton);
+
+    // setting the internal-frame visible
     internalFrame.setVisible(true);
 
     // everytime the main-frame is resized, the internal-frame is re-centered
-    mainFrame.addComponentListener(
-        new ComponentAdapter() {
-          @Override
-          public void componentResized(ComponentEvent e) {
-            int xA = (mainFrame.getWidth() - internalFrame.getWidth()) / 2;
-            int yA = (mainFrame.getHeight() - internalFrame.getHeight()) / 2;
-
-            internalFrame.setLocation(xA, yA);
-
-            // everytime the main-frame is resized, the subWindowPane is resized too
-            int xB = mainFrame.getWidth();
-            int yB = mainFrame.getHeight();
-
-            subWindowPane.setBounds(0, 0, xB, yB);
-          }
-        });
+    InternalFrame.autoCenter(mainFrame, internalFrame, subWindowPane);
 
     // everytime the internal-frame is moved, it re-center itself
-    internalFrame.addComponentListener(
-        new ComponentAdapter() {
-          @Override
-          public void componentMoved(ComponentEvent e) {
-            int x = (mainFrame.getWidth() - internalFrame.getWidth()) / 2;
-            int y = (mainFrame.getHeight() - internalFrame.getHeight()) / 2;
+    InternalFrame.noMove(mainFrame, internalFrame);
 
-            internalFrame.setLocation(x, y);
+    //
+    depositButton.addActionListener(
+        new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            internalFrame.dispose();
+            mainFrame.dispose();
+            MainFrame mainFrame = new MainFrame();
           }
         });
   }
@@ -74,49 +80,28 @@ public class InternalFrame {
         new LoginInternalFrame(mainFrame, internalFrame, users_info);
 
     // everytime the main-frame is resized, the internal-frame is re-centered
-    mainFrame.addComponentListener(
-        new ComponentAdapter() {
-          @Override
-          public void componentResized(ComponentEvent e) {
-            int xA = (mainFrame.getWidth() - internalFrame.getWidth()) / 2;
-            int yA = (mainFrame.getHeight() - internalFrame.getHeight()) / 2;
-
-            internalFrame.setLocation(xA, yA);
-
-            // everytime the main-frame is resized, the subWindowPane is resized too
-            int xB = mainFrame.getWidth();
-            int yB = mainFrame.getHeight();
-
-            subWindowPane.setBounds(0, 0, xB, yB);
-          }
-        });
+    InternalFrame.autoCenter(mainFrame, internalFrame, subWindowPane);
 
     // everytime the internal-frame is moved, it re-center itself
-    internalFrame.addComponentListener(
-        new ComponentAdapter() {
-          @Override
-          public void componentMoved(ComponentEvent e) {
-            int x = (mainFrame.getWidth() - internalFrame.getWidth()) / 2;
-            int y = (mainFrame.getHeight() - internalFrame.getHeight()) / 2;
-
-            internalFrame.setLocation(x, y);
-          }
-        });
+    InternalFrame.noMove(mainFrame, internalFrame);
   }
 
-  public JDesktopPane subWindowPaneInit(JFrame mainFrame) {
-    // initialising the sub-frames container
+  // initialising the sub-frames container
+  public static JDesktopPane subWindowPaneInit(JFrame mainFrame) {
     JDesktopPane subWindowPane = new JDesktopPane();
     subWindowPane.setBounds(0, 0, mainFrame.getWidth(), mainFrame.getHeight());
 
     // adding subWindow to the main-frame
-    mainFrame.add(subWindowPane);
+    mainFrame.add(subWindowPane, BorderLayout.CENTER);
+
+    // replacing default content pane
+    mainFrame.setContentPane(subWindowPane);
 
     return subWindowPane;
   }
 
-  public JInternalFrame internalFrameInit(JDesktopPane subWindowPane) {
-    // initialising main sub-frame
+  // initialising main sub-frame
+  public static JInternalFrame internalFrameInit(JDesktopPane subWindowPane) {
     JInternalFrame internalFrame = new JInternalFrame("", false, false, false, false);
 
     internalFrame.setSize(500, 700);
@@ -135,8 +120,8 @@ public class InternalFrame {
     return internalFrame;
   }
 
+  // initialising main title
   public static JLabel mainTitle(JInternalFrame internalFrame, String label) {
-    // initialising main title
     JLabel mainTitle = new JLabel(label);
 
     mainTitle.setBounds(0, 0, 300, 180);
@@ -156,9 +141,9 @@ public class InternalFrame {
     return mainTitle;
   }
 
+  // initialising generic text-field
   public static JTextField textFieldInit(
       JInternalFrame internalFrame, String placeHolder, Font font, int y) {
-    // initialising generic text-field
     JTextField textField = new JTextField();
 
     textField.setBounds(0, 0, 250, 45);
@@ -173,9 +158,9 @@ public class InternalFrame {
     return textField;
   }
 
+  // initialising generic password-text-field
   public static JPasswordField passwordTextFieldInit(
       JInternalFrame internalFrame, String placeHolder, Font font, int y) {
-    // initialising generic password-text-field
     JPasswordField passwordTextField = new JPasswordField();
 
     passwordTextField.setBounds(0, 0, 250, 45);
@@ -190,17 +175,17 @@ public class InternalFrame {
     return passwordTextField;
   }
 
+  // initialising generic text-field border
   public static Border borderInit(JTextField textField) {
-    // initialising generic text-field border
     Border textFieldBorder = BorderFactory.createLineBorder(Color.GRAY, 2, true);
     textField.setBorder(textFieldBorder);
 
     return textFieldBorder;
   }
 
+  // initialising generic text-field label
   public static JLabel labelInit(
       JInternalFrame internalFrame, JTextField textField, Font font, String purpose, int y) {
-    // initialising generic text-field label
     JLabel textFieldLabel = new JLabel(purpose);
 
     textFieldLabel.setBounds(0, 0, 250, 50);
@@ -212,6 +197,7 @@ public class InternalFrame {
     return textFieldLabel;
   }
 
+  // generic button initialisation
   public static JButton buttonInit(
       JInternalFrame internalFrame, JTextField textField, Font font, String purpose, int y) {
     JButton button = new JButton(purpose);
@@ -225,13 +211,13 @@ public class InternalFrame {
     return button;
   }
 
+  // show/hide password button
   public static JButton showHidePasswordButton(
       JInternalFrame internalFrame,
       JTextField passwordTextField,
       ImageIcon hidePasswordIcon,
       int x,
       int y) {
-    // show/hide password button
     JButton showHidePasswordButton = new JButton(hidePasswordIcon);
 
     showHidePasswordButton.setBounds(0, 0, 45, 45);
@@ -240,5 +226,52 @@ public class InternalFrame {
         ((internalFrame.getHeight() - passwordTextField.getHeight()) / 2) + y);
 
     return showHidePasswordButton;
+  }
+
+  //
+  //  public static List<Component> getAllComponents(Container container, ArrayList<Component>
+  // components) {
+  //    for (Component comp : container.getComponents()) {
+  //      components.add(comp);
+  //
+  //      if (comp instanceof Container) {
+  //        getAllComponents((Container) comp, components);
+  //      }
+  //    }
+  //  }
+
+  // everytime the main-frame is resized, the internal-frame is re-centered
+  public static void autoCenter(
+      JFrame mainFrame, JInternalFrame internalFrame, JDesktopPane subWindowPane) {
+    mainFrame.addComponentListener(
+        new ComponentAdapter() {
+          @Override
+          public void componentResized(ComponentEvent e) {
+            int xA = (mainFrame.getWidth() - internalFrame.getWidth()) / 2;
+            int yA = (mainFrame.getHeight() - internalFrame.getHeight()) / 2;
+
+            internalFrame.setLocation(xA, yA);
+
+            // everytime the main-frame is resized, the subWindowPane is resized too
+            int xB = mainFrame.getWidth();
+            int yB = mainFrame.getHeight();
+
+            subWindowPane.setBounds(0, 0, xB, yB);
+          }
+        });
+  }
+
+  // everytime the internal-frame is moved, it re-center itself
+  public static void noMove(JFrame mainFrame, JInternalFrame internalFrame) {
+    internalFrame.addComponentListener(
+        new ComponentAdapter() {
+          @Override
+          public void componentMoved(ComponentEvent e) {
+            int x = (mainFrame.getWidth() - internalFrame.getWidth()) / 2;
+            int y = (mainFrame.getHeight() - internalFrame.getHeight()) / 2;
+
+            internalFrame.setLocation(x, y);
+          }
+        });
   }
 }
