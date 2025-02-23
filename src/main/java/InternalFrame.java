@@ -1,8 +1,6 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
 import javax.swing.*;
 import javax.swing.border.Border;
 
