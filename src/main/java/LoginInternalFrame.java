@@ -11,113 +11,53 @@ public class LoginInternalFrame {
     // setting login window title
     internalFrame.setTitle("Login");
 
-    // login window logo
-    ImageIcon loginBankLogo = new ImageIcon("src/main/resources/images/vBank2-rounded.png");
-
-    // initialising login title
-    JLabel loginMainTitle = new JLabel("LOGIN");
-
-    loginMainTitle.setBounds(0, 0, 300, 180);
-
-    loginMainTitle.setVerticalAlignment(JLabel.CENTER);
-    loginMainTitle.setHorizontalAlignment(JLabel.CENTER);
-
-    loginMainTitle.setHorizontalTextPosition(JLabel.CENTER);
-    loginMainTitle.setVerticalTextPosition(JLabel.BOTTOM);
-
-    loginMainTitle.setFont(new Font("Arial", Font.BOLD, 40));
-    loginMainTitle.setIcon(loginBankLogo);
-    loginMainTitle.setLocation(
-        (internalFrame.getWidth() - loginMainTitle.getWidth()) / 2,
-        ((internalFrame.getHeight() - loginMainTitle.getHeight()) / 2) - 230);
+    // initialising login main title
+    JLabel loginMainTitle = InternalFrame.mainTitle(internalFrame, "LOGIN");
 
     // login internal-frame font
     Font font = new Font("Arial", Font.PLAIN, 16);
 
-    // place-holders
-    String usernameTextFieldPlaceHolder = "Type your username";
-    String passwordTextFieldPlaceHolder = "Type your password";
-
     // initialising username text-field
-    JTextField usernameTextField = new JTextField();
-
-    usernameTextField.setBounds(0, 0, 250, 45);
-    usernameTextField.setText(usernameTextFieldPlaceHolder);
-    usernameTextField.setFont(font);
-    usernameTextField.setEditable(true);
-    usernameTextField.setHorizontalAlignment(JTextField.CENTER);
-    usernameTextField.setLocation(
-        (internalFrame.getWidth() - usernameTextField.getWidth()) / 2,
-        ((internalFrame.getHeight() - usernameTextField.getHeight()) / 2) - 100);
+    JTextField usernameTextField =
+        InternalFrame.textFieldInit(
+            internalFrame, InternalFrame.usernameTextFieldPlaceHolder, font, -100);
 
     // initialising username text-field border
-    Border usernameTextFieldBorder = BorderFactory.createLineBorder(Color.GRAY, 2, true);
-    usernameTextField.setBorder(usernameTextFieldBorder);
+    Border usernameTextFieldBorder = InternalFrame.borderInit(usernameTextField);
 
     // initialising username text-field label
-    JLabel usernameTextFieldLabel = new JLabel("Username");
-
-    usernameTextFieldLabel.setBounds(0, 0, 250, 50);
-    usernameTextFieldLabel.setLocation(
-        (internalFrame.getWidth() - usernameTextField.getWidth()) / 2,
-        ((internalFrame.getHeight() - usernameTextField.getHeight()) / 2) - 135);
-    usernameTextFieldLabel.setFont(font);
+    JLabel usernameTextFieldLabel =
+        InternalFrame.labelInit(internalFrame, usernameTextField, font, "Username", -135);
 
     // initialising password text-field
-    JPasswordField passwordTextField = new JPasswordField();
-
-    passwordTextField.setBounds(0, 0, 250, 45);
-    passwordTextField.setText(passwordTextFieldPlaceHolder);
-    passwordTextField.setFont(font);
-    passwordTextField.setEditable(true);
-    passwordTextField.setHorizontalAlignment(JTextField.CENTER);
-    passwordTextField.setLocation(
-        (internalFrame.getWidth() - passwordTextField.getWidth()) / 2,
-        (internalFrame.getHeight() - passwordTextField.getHeight()) / 2);
+    JPasswordField passwordTextField =
+        InternalFrame.passwordTextFieldInit(
+            internalFrame, InternalFrame.passwordTextFieldPlaceHolder, font, 0);
     passwordTextField.setEchoChar((char) 0);
 
     // initialising password text-field border
-    Border passwordTextFieldBorder = BorderFactory.createLineBorder(Color.GRAY, 2, true);
-    passwordTextField.setBorder(passwordTextFieldBorder);
+    Border passwordTextFieldBorder = InternalFrame.borderInit(passwordTextField);
 
     // initialising password text-field label
-    JLabel passwordTextFieldLabel = new JLabel("Password");
-
-    passwordTextFieldLabel.setBounds(0, 0, 250, 50);
-    passwordTextFieldLabel.setLocation(
-        (internalFrame.getWidth() - passwordTextField.getWidth()) / 2,
-        ((internalFrame.getHeight() - passwordTextField.getHeight()) / 2) - 35);
-    passwordTextFieldLabel.setFont(font);
+    JLabel passwordTextFieldLabel =
+        InternalFrame.labelInit(internalFrame, passwordTextField, font, "Password", -35);
 
     // show/hide button imageIcon
     ImageIcon showPasswordIcon = new ImageIcon("src/main/resources/images/show-password.png");
     ImageIcon hidePasswordIcon = new ImageIcon("src/main/resources/images/hide-password.png");
 
     // show/hide password button
-    JButton showHidePasswordButton = new JButton(hidePasswordIcon);
-
-    showHidePasswordButton.setBounds(0, 0, 45, 45);
-    showHidePasswordButton.setLocation(
-        ((internalFrame.getWidth() - passwordTextField.getWidth()) / 2) + 260,
-        ((internalFrame.getHeight() - passwordTextField.getHeight()) / 2));
+    JButton showHidePasswordButton =
+        InternalFrame.showHidePasswordButton(
+            internalFrame, passwordTextField, hidePasswordIcon, 260, 0);
 
     // login button
-    JButton loginButton = new JButton("Login");
-
-    loginButton.setBounds(0, 0, 250, 45);
-    loginButton.setLocation(
-        (internalFrame.getWidth() - passwordTextField.getWidth()) / 2,
-        ((internalFrame.getHeight() - passwordTextField.getHeight()) / 2) + 90);
-    loginButton.setFont(font);
+    JButton loginButton =
+        InternalFrame.buttonInit(internalFrame, usernameTextField, font, "Login", 90);
 
     // register button
-    JButton registerButton = new JButton("Sign in");
-
-    registerButton.setBounds(0, 0, 250, 45);
-    registerButton.setLocation(
-        (internalFrame.getWidth() - passwordTextField.getWidth()) / 2,
-        ((internalFrame.getHeight() - passwordTextField.getHeight()) / 2) + 150);
-    registerButton.setFont(font);
+    JButton registerButton =
+        InternalFrame.buttonInit(internalFrame, usernameTextField, font, "Register", 150);
 
     // remember-me check-box
     JCheckBox rememberMe = new JCheckBox("Keep me logged");
@@ -180,7 +120,7 @@ public class LoginInternalFrame {
                   String userSurname = (line = inFile.readLine()).split(";")[1];
 
                   // instancing logged user
-                  MainFrame.setUser(
+                  MainFrame.setSessionUser(
                       new User(
                           userName,
                           userSurname,
@@ -229,7 +169,7 @@ public class LoginInternalFrame {
         new FocusAdapter() {
           @Override
           public void focusGained(FocusEvent e) {
-            if (usernameTextField.getText().equals(usernameTextFieldPlaceHolder)) {
+            if (usernameTextField.getText().equals(InternalFrame.usernameTextFieldPlaceHolder)) {
               usernameTextField.setText("");
             }
           }
@@ -237,7 +177,7 @@ public class LoginInternalFrame {
           @Override
           public void focusLost(FocusEvent e) {
             if (usernameTextField.getText().isEmpty()) {
-              usernameTextField.setText(usernameTextFieldPlaceHolder);
+              usernameTextField.setText(InternalFrame.usernameTextFieldPlaceHolder);
             }
           }
         });
@@ -248,7 +188,7 @@ public class LoginInternalFrame {
           @Override
           public void focusGained(FocusEvent e) {
             if (String.valueOf(passwordTextField.getPassword())
-                .equals(passwordTextFieldPlaceHolder)) {
+                .equals(InternalFrame.passwordTextFieldPlaceHolder)) {
               passwordTextField.setText("");
               passwordTextField.setEchoChar('*');
             }
@@ -258,7 +198,7 @@ public class LoginInternalFrame {
           public void focusLost(FocusEvent e) {
             if (passwordTextField.getPassword().length == 0) {
               passwordTextField.setEchoChar((char) 0);
-              passwordTextField.setText(passwordTextFieldPlaceHolder);
+              passwordTextField.setText(InternalFrame.passwordTextFieldPlaceHolder);
               showHidePasswordButton.setIcon(hidePasswordIcon);
             }
           }
@@ -270,7 +210,7 @@ public class LoginInternalFrame {
           @Override
           public void actionPerformed(ActionEvent e) {
             if (String.valueOf(passwordTextField.getPassword())
-                .equals(passwordTextFieldPlaceHolder)) {
+                .equals(InternalFrame.passwordTextFieldPlaceHolder)) {
               return;
             }
 

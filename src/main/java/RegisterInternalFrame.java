@@ -14,168 +14,80 @@ public class RegisterInternalFrame {
   RegisterInternalFrame(
       JFrame loginSignInMainFrame, JInternalFrame internalFrame, File users_info) {
 
-    // setting login window title
+    // setting sign-in window title
     internalFrame.setTitle("Register");
 
-    // register window logo
-    ImageIcon loginBankLogo = new ImageIcon("src/main/resources/images/vBank2-rounded.png");
-
-    // initialising sign-in title
-    JLabel registerMainTitle = new JLabel("SIGN IN");
-
-    registerMainTitle.setBounds(0, 0, 300, 180);
-
-    registerMainTitle.setVerticalAlignment(JLabel.CENTER);
-    registerMainTitle.setHorizontalAlignment(JLabel.CENTER);
-
-    registerMainTitle.setHorizontalTextPosition(JLabel.CENTER);
-    registerMainTitle.setVerticalTextPosition(JLabel.BOTTOM);
-
-    registerMainTitle.setFont(new Font("Arial", Font.BOLD, 40));
-    registerMainTitle.setIcon(loginBankLogo);
-    registerMainTitle.setLocation(
-        (internalFrame.getWidth() - registerMainTitle.getWidth()) / 2,
-        ((internalFrame.getHeight() - registerMainTitle.getHeight()) / 2) - 230);
+    // initialising sign-in main title
+    JLabel registerMainTitle = InternalFrame.mainTitle(internalFrame, "SIGN IN");
 
     // register internal-frame font
     Font font = new Font("Arial", Font.PLAIN, 16);
 
-    // place-holders
-    String nameTextFieldPlaceHolder = "Type your name";
-    String surnameTextFieldPlaceHolder = "Type your surname";
-    String usernameTextFieldPlaceHolder = "Type your username";
-    String passwordTextFieldPlaceHolder = "Type your password";
-
     // initialising name text-field
-    JTextField nameTextField = new JTextField();
-
-    nameTextField.setBounds(0, 0, 250, 45);
-    nameTextField.setText(nameTextFieldPlaceHolder);
-    nameTextField.setFont(font);
-    nameTextField.setEditable(true);
-    nameTextField.setHorizontalAlignment(JTextField.CENTER);
-    nameTextField.setLocation(
-        (internalFrame.getWidth() - nameTextField.getWidth()) / 2,
-        ((internalFrame.getHeight() - nameTextField.getHeight()) / 2) - 100);
+    JTextField nameTextField =
+        InternalFrame.textFieldInit(
+            internalFrame, InternalFrame.nameTextFieldPlaceHolder, font, -100);
 
     // initialising name text-field border
-    Border nameTextFieldBorder = BorderFactory.createLineBorder(Color.GRAY, 2, true);
-    nameTextField.setBorder(nameTextFieldBorder);
+    Border nameTextFieldBorder = InternalFrame.borderInit(nameTextField);
 
     // initialising name text-field label
-    JLabel nameTextFieldLabel = new JLabel("Name");
-
-    nameTextFieldLabel.setBounds(0, 0, 250, 50);
-    nameTextFieldLabel.setLocation(
-        (internalFrame.getWidth() - nameTextField.getWidth()) / 2,
-        ((internalFrame.getHeight() - nameTextField.getHeight()) / 2) - 135);
-    nameTextFieldLabel.setFont(font);
+    JLabel nameTextFieldLabel =
+        InternalFrame.labelInit(internalFrame, nameTextField, font, "Name", -135);
 
     // initialising surname text-field
-    JTextField surnameTextField = new JTextField();
-
-    surnameTextField.setBounds(0, 0, 250, 45);
-    surnameTextField.setText(surnameTextFieldPlaceHolder);
-    surnameTextField.setFont(font);
-    surnameTextField.setEditable(true);
-    surnameTextField.setHorizontalAlignment(JTextField.CENTER);
-    surnameTextField.setLocation(
-        (internalFrame.getWidth() - surnameTextField.getWidth()) / 2,
-        ((internalFrame.getHeight() - surnameTextField.getHeight()) / 2) - 20);
+    JTextField surnameTextField =
+        InternalFrame.textFieldInit(
+            internalFrame, InternalFrame.surnameTextFieldPlaceHolder, font, -20);
 
     // initialising surname text-field border
-    Border surnameTextFieldBorder = BorderFactory.createLineBorder(Color.GRAY, 2, true);
-    surnameTextField.setBorder(surnameTextFieldBorder);
+    Border surnameTextFieldBorder = InternalFrame.borderInit(surnameTextField);
 
     // initialising surname text-field label
-    JLabel surnameTextFieldLabel = new JLabel("Surname");
-
-    surnameTextFieldLabel.setBounds(0, 0, 250, 50);
-    surnameTextFieldLabel.setLocation(
-        (internalFrame.getWidth() - surnameTextField.getWidth()) / 2,
-        ((internalFrame.getHeight() - surnameTextField.getHeight()) / 2) - 55);
-    surnameTextFieldLabel.setFont(font);
+    JLabel surnameTextFieldLabel =
+        InternalFrame.labelInit(internalFrame, surnameTextField, font, "Surname", -55);
 
     // initialising username text-field
-    JTextField usernameTextField = new JTextField();
-
-    usernameTextField.setBounds(0, 0, 250, 45);
-    usernameTextField.setText(usernameTextFieldPlaceHolder);
-    usernameTextField.setFont(font);
-    usernameTextField.setEditable(true);
-    usernameTextField.setHorizontalAlignment(JTextField.CENTER);
-    usernameTextField.setLocation(
-        (internalFrame.getWidth() - usernameTextField.getWidth()) / 2,
-        ((internalFrame.getHeight() - usernameTextField.getHeight()) / 2) + 60);
+    JTextField usernameTextField =
+        InternalFrame.textFieldInit(
+            internalFrame, InternalFrame.usernameTextFieldPlaceHolder, font, 60);
 
     // initialising username text-field border
-    Border usernameTextFieldBorder = BorderFactory.createLineBorder(Color.GRAY, 2, true);
-    usernameTextField.setBorder(usernameTextFieldBorder);
+    Border usernameTextFieldBorder = InternalFrame.borderInit(usernameTextField);
 
     // initialising username text-field label
-    JLabel usernameTextFieldLabel = new JLabel("Username");
-
-    usernameTextFieldLabel.setBounds(0, 0, 250, 50);
-    usernameTextFieldLabel.setLocation(
-        (internalFrame.getWidth() - usernameTextField.getWidth()) / 2,
-        ((internalFrame.getHeight() - usernameTextField.getHeight()) / 2) + 25);
-    usernameTextFieldLabel.setFont(font);
+    JLabel usernameTextFieldLabel =
+        InternalFrame.labelInit(internalFrame, usernameTextField, font, "Username", 25);
 
     // initialising password text-field
-    JPasswordField passwordTextField = new JPasswordField();
-
-    passwordTextField.setBounds(0, 0, 250, 45);
-    passwordTextField.setText(passwordTextFieldPlaceHolder);
-    passwordTextField.setFont(font);
-    passwordTextField.setEditable(true);
-    passwordTextField.setHorizontalAlignment(JTextField.CENTER);
-    passwordTextField.setLocation(
-        (internalFrame.getWidth() - passwordTextField.getWidth()) / 2,
-        ((internalFrame.getHeight() - passwordTextField.getHeight()) / 2) + 140);
+    JPasswordField passwordTextField =
+        InternalFrame.passwordTextFieldInit(
+            internalFrame, InternalFrame.passwordTextFieldPlaceHolder, font, 140);
     passwordTextField.setEchoChar((char) 0);
 
     // initialising password text-field border
-    Border passwordTextFieldBorder = BorderFactory.createLineBorder(Color.GRAY, 2, true);
-    passwordTextField.setBorder(passwordTextFieldBorder);
+    Border passwordTextFieldBorder = InternalFrame.borderInit(passwordTextField);
 
     // initialising password text-field label
-    JLabel passwordTextFieldLabel = new JLabel("Password");
-
-    passwordTextFieldLabel.setBounds(0, 0, 250, 50);
-    passwordTextFieldLabel.setLocation(
-        (internalFrame.getWidth() - passwordTextField.getWidth()) / 2,
-        ((internalFrame.getHeight() - passwordTextField.getHeight()) / 2) + 105);
-    passwordTextFieldLabel.setFont(font);
+    JLabel passwordTextFieldLabel =
+        InternalFrame.labelInit(internalFrame, passwordTextField, font, "Password", 105);
 
     // show/hide button imageIcon
     ImageIcon showPasswordIcon = new ImageIcon("src/main/resources/images/show-password.png");
     ImageIcon hidePasswordIcon = new ImageIcon("src/main/resources/images/hide-password.png");
 
     // show/hide password button
-    JButton showHidePasswordButton = new JButton(hidePasswordIcon);
-
-    showHidePasswordButton.setBounds(0, 0, 45, 45);
-    showHidePasswordButton.setLocation(
-        ((internalFrame.getWidth() - passwordTextField.getWidth()) / 2) + 260,
-        ((internalFrame.getHeight() - passwordTextField.getHeight()) / 2) + 140);
+    JButton showHidePasswordButton =
+        InternalFrame.showHidePasswordButton(
+            internalFrame, passwordTextField, hidePasswordIcon, 260, 140);
 
     // register button
-    JButton registerButton = new JButton("Sign in");
-
-    registerButton.setBounds(0, 0, 250, 45);
-    registerButton.setLocation(
-        (internalFrame.getWidth() - passwordTextField.getWidth()) / 2,
-        ((internalFrame.getHeight() - passwordTextField.getHeight()) / 2) + 220);
-    registerButton.setFont(font);
+    JButton registerButton =
+        InternalFrame.buttonInit(internalFrame, usernameTextField, font, "Register", 220);
 
     // go-back button
-    JButton goBackButton = new JButton("Go back");
-
-    goBackButton.setBounds(0, 0, 250, 45);
-    goBackButton.setLocation(
-        (internalFrame.getWidth() - passwordTextField.getWidth()) / 2,
-        ((internalFrame.getHeight() - passwordTextField.getHeight()) / 2) + 270);
-    goBackButton.setFont(font);
+    JButton goBackButton =
+        InternalFrame.buttonInit(internalFrame, usernameTextField, font, "Go back", 270);
 
     // remove all the components of the previous login interface
     internalFrame.getContentPane().removeAll();
@@ -217,7 +129,7 @@ public class RegisterInternalFrame {
 
               // username field
               if (!usernameTextField.getText().isEmpty()
-                  && !usernameTextField.getText().equals(usernameTextFieldPlaceHolder)
+                  && !usernameTextField.getText().equals(InternalFrame.usernameTextFieldPlaceHolder)
                   && usernameTextField.getText().length() > 3) {
                 newUserInfo += "\nusername;" + usernameTextField.getText();
               } else {
@@ -229,7 +141,7 @@ public class RegisterInternalFrame {
               // password field
               if (!String.valueOf(passwordTextField.getPassword()).isEmpty()
                   && !String.valueOf(passwordTextField.getPassword())
-                      .equals(passwordTextFieldPlaceHolder)
+                      .equals(InternalFrame.passwordTextFieldPlaceHolder)
                   && passwordTextField.getPassword().length > 7) {
                 newUserInfo += "\npassword;" + String.valueOf(passwordTextField.getPassword());
               } else {
@@ -240,7 +152,7 @@ public class RegisterInternalFrame {
 
               // name field
               if (!nameTextField.getText().isEmpty()
-                  && !nameTextField.getText().equals(nameTextFieldPlaceHolder)
+                  && !nameTextField.getText().equals(InternalFrame.nameTextFieldPlaceHolder)
                   && nameTextField.getText().length() > 2) {
                 newUserInfo += "\nname;" + nameTextField.getText();
               } else {
@@ -251,7 +163,7 @@ public class RegisterInternalFrame {
 
               // surname field
               if (!surnameTextField.getText().isEmpty()
-                  && !surnameTextField.getText().equals(surnameTextFieldPlaceHolder)
+                  && !surnameTextField.getText().equals(InternalFrame.surnameTextFieldPlaceHolder)
                   && surnameTextField.getText().length() > 2) {
                 newUserInfo += "\nsurname;" + surnameTextField.getText();
               } else {
@@ -283,7 +195,7 @@ public class RegisterInternalFrame {
               }
 
               // instancing new registered user
-              MainFrame.setUser(
+              MainFrame.setSessionUser(
                   new User(
                       nameTextField.getText(),
                       surnameTextField.getText(),
@@ -324,7 +236,7 @@ public class RegisterInternalFrame {
         new FocusAdapter() {
           @Override
           public void focusGained(FocusEvent e) {
-            if (nameTextField.getText().equals(nameTextFieldPlaceHolder)) {
+            if (nameTextField.getText().equals(InternalFrame.nameTextFieldPlaceHolder)) {
               nameTextField.setText("");
             }
           }
@@ -332,7 +244,7 @@ public class RegisterInternalFrame {
           @Override
           public void focusLost(FocusEvent e) {
             if (nameTextField.getText().isEmpty()) {
-              nameTextField.setText(nameTextFieldPlaceHolder);
+              nameTextField.setText(InternalFrame.nameTextFieldPlaceHolder);
             }
           }
         });
@@ -342,7 +254,7 @@ public class RegisterInternalFrame {
         new FocusAdapter() {
           @Override
           public void focusGained(FocusEvent e) {
-            if (surnameTextField.getText().equals(surnameTextFieldPlaceHolder)) {
+            if (surnameTextField.getText().equals(InternalFrame.surnameTextFieldPlaceHolder)) {
               surnameTextField.setText("");
             }
           }
@@ -350,7 +262,7 @@ public class RegisterInternalFrame {
           @Override
           public void focusLost(FocusEvent e) {
             if (surnameTextField.getText().isEmpty()) {
-              surnameTextField.setText(surnameTextFieldPlaceHolder);
+              surnameTextField.setText(InternalFrame.surnameTextFieldPlaceHolder);
             }
           }
         });
@@ -360,7 +272,7 @@ public class RegisterInternalFrame {
         new FocusAdapter() {
           @Override
           public void focusGained(FocusEvent e) {
-            if (usernameTextField.getText().equals(usernameTextFieldPlaceHolder)) {
+            if (usernameTextField.getText().equals(InternalFrame.usernameTextFieldPlaceHolder)) {
               usernameTextField.setText("");
             }
           }
@@ -368,7 +280,7 @@ public class RegisterInternalFrame {
           @Override
           public void focusLost(FocusEvent e) {
             if (usernameTextField.getText().isEmpty()) {
-              usernameTextField.setText(usernameTextFieldPlaceHolder);
+              usernameTextField.setText(InternalFrame.usernameTextFieldPlaceHolder);
             }
           }
         });
@@ -379,7 +291,7 @@ public class RegisterInternalFrame {
           @Override
           public void focusGained(FocusEvent e) {
             if (String.valueOf(passwordTextField.getPassword())
-                .equals(passwordTextFieldPlaceHolder)) {
+                .equals(InternalFrame.passwordTextFieldPlaceHolder)) {
               passwordTextField.setText("");
               passwordTextField.setEchoChar('*');
             }
@@ -389,7 +301,7 @@ public class RegisterInternalFrame {
           public void focusLost(FocusEvent e) {
             if (passwordTextField.getPassword().length == 0) {
               passwordTextField.setEchoChar((char) 0);
-              passwordTextField.setText(passwordTextFieldPlaceHolder);
+              passwordTextField.setText(InternalFrame.passwordTextFieldPlaceHolder);
               showHidePasswordButton.setIcon(hidePasswordIcon);
             }
           }
@@ -401,7 +313,7 @@ public class RegisterInternalFrame {
           @Override
           public void actionPerformed(ActionEvent e) {
             if (String.valueOf(passwordTextField.getPassword())
-                .equals(passwordTextFieldPlaceHolder)) {
+                .equals(InternalFrame.passwordTextFieldPlaceHolder)) {
               return;
             }
 
