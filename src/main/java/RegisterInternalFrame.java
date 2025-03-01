@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import javax.swing.*;
-import javax.swing.border.Border;
 
 public class RegisterInternalFrame {
 
@@ -29,7 +28,7 @@ public class RegisterInternalFrame {
             internalFrame, InternalFrame.nameTextFieldPlaceHolder, font, -100);
 
     // initialising name text-field border
-    Border nameTextFieldBorder = InternalFrame.borderInit(nameTextField);
+    InternalFrame.borderInit(nameTextField);
 
     // initialising name text-field label
     JLabel nameTextFieldLabel =
@@ -41,7 +40,7 @@ public class RegisterInternalFrame {
             internalFrame, InternalFrame.surnameTextFieldPlaceHolder, font, -20);
 
     // initialising surname text-field border
-    Border surnameTextFieldBorder = InternalFrame.borderInit(surnameTextField);
+    InternalFrame.borderInit(surnameTextField);
 
     // initialising surname text-field label
     JLabel surnameTextFieldLabel =
@@ -53,7 +52,7 @@ public class RegisterInternalFrame {
             internalFrame, InternalFrame.usernameTextFieldPlaceHolder, font, 60);
 
     // initialising username text-field border
-    Border usernameTextFieldBorder = InternalFrame.borderInit(usernameTextField);
+    InternalFrame.borderInit(usernameTextField);
 
     // initialising username text-field label
     JLabel usernameTextFieldLabel =
@@ -66,7 +65,7 @@ public class RegisterInternalFrame {
     passwordTextField.setEchoChar((char) 0);
 
     // initialising password text-field border
-    Border passwordTextFieldBorder = InternalFrame.borderInit(passwordTextField);
+    InternalFrame.borderInit(passwordTextField);
 
     // initialising password text-field label
     JLabel passwordTextFieldLabel =
@@ -206,7 +205,7 @@ public class RegisterInternalFrame {
               loginSignInMainFrame.dispose();
 
               // instancing main frame for effective use
-              MainFrame realMainFrame = new MainFrame();
+              new MainFrame();
 
               // writing in users_info.txt
               outFile.write(newUserInfo);
@@ -226,8 +225,7 @@ public class RegisterInternalFrame {
         new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
-            LoginInternalFrame loginInternalFrame =
-                new LoginInternalFrame(loginSignInMainFrame, internalFrame, users_info);
+            new LoginInternalFrame(loginSignInMainFrame, internalFrame, users_info);
           }
         });
 

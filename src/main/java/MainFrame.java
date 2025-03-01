@@ -3,21 +3,19 @@ import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
 import javax.swing.*;
 
 public class MainFrame {
 
-  public static User sessionUser;
+  private static User sessionUser;
 
   // main-frame instanced for effective use
   MainFrame() {
 
     // theme
-    if (!setTheme("white")) {
+    if (!setTheme("l")) {
       System.err.println("theme init failure");
     }
 
@@ -53,7 +51,7 @@ public class MainFrame {
     balanceDisplay.setText(
         "Balance   "
             + sessionUser.getBankAccount().getBalance()
-            + "         Wallet   "
+            + "           Wallet   "
             + sessionUser.getWallet());
     balanceDisplay.setFont(font);
     balanceDisplay.setHorizontalAlignment(JLabel.CENTER);
@@ -135,8 +133,8 @@ public class MainFrame {
     mainPanel.add(profilePanel, BorderLayout.NORTH);
     mainPanel.add(actionsPanel, BorderLayout.SOUTH);
 
-    // adding components to the main frame
-    mainFrame.add(mainPanel);
+    //
+    mainFrame.setContentPane(mainPanel);
 
     // setting the main-frame visible
     mainFrame.setVisible(true);
@@ -146,7 +144,90 @@ public class MainFrame {
         new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
-            // InternalFrame internalFrame = new InternalFrame(mainFrame, mainPanel, "d");
+            //
+            new InternalFrame(mainFrame, "Deposit");
+          }
+        });
+
+    //
+    withDrawButton.addActionListener(
+        new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            //
+            new InternalFrame(mainFrame, "Withdraw");
+          }
+        });
+
+    //
+    // investment
+
+    //
+    // transactions
+
+    //
+    logoutButton.addActionListener(
+        new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+
+            //
+            File users_info = new File("src/main/resources/users_info.csv");
+
+            //
+            ArrayList<String> fileContent = new ArrayList<>();
+
+            try {
+
+              //
+              try (BufferedReader inFile = new BufferedReader(new FileReader(users_info))) {
+                String line;
+
+                //
+                while ((line = inFile.readLine()) != null) {
+                  fileContent.add(line);
+                }
+
+                //
+                fileContent.set(0, "default;");
+              }
+
+              //
+              try (BufferedWriter outFile = new BufferedWriter(new FileWriter(users_info, false))) {
+
+                //
+                for (String i : fileContent) {
+                  outFile.write(i + "\n");
+                }
+              }
+            } catch (IOException exc) {
+              System.err.println("log-out default user failure");
+            }
+
+            //
+            MainFrame.setSessionUser(null);
+
+            // initialising main frame
+            //            JFrame mainFrame = new JFrame("Volksbank App");
+            //            mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            //            mainFrame.setSize(1600, 1024);
+            //            mainFrame.setLayout(new BorderLayout());
+            //            mainFrame.setLocationRelativeTo(null);
+            //            mainFrame.setIconImage(
+            //                new
+            // ImageIcon("src/main/resources/images/vBank2-rounded.png").getImage());
+
+            //
+            new InternalFrame(mainFrame, users_info);
+          }
+        });
+
+    //
+    exitButton.addActionListener(
+        new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            mainFrame.dispose();
           }
         });
   }
@@ -155,7 +236,7 @@ public class MainFrame {
   MainFrame(File users_info) {
 
     // theme
-    if (!setTheme("white")) {
+    if (!setTheme("l")) {
       System.err.println("theme init failure");
     }
 
@@ -169,6 +250,8 @@ public class MainFrame {
     mainFrame.setIconImage(
         new ImageIcon("src/main/resources/images/vBank2-rounded.png").getImage());
 
+    subWindowPaneInit(mainFrame);
+
     // set main-frame visible
     mainFrame.setVisible(true);
 
@@ -179,7 +262,7 @@ public class MainFrame {
       if (inFile.readLine().equals("default;")) {
 
         // instantiating the main-sub-frame
-        InternalFrame internalFrame = new InternalFrame(mainFrame, users_info);
+        new InternalFrame(mainFrame, users_info);
       }
     } catch (IOException e) {
       System.err.println("error");
@@ -196,7 +279,7 @@ public class MainFrame {
 
   private boolean setTheme(String theme) {
     switch (theme) {
-      case "black":
+      case "d": // dark theme
         {
           if (!FlatDarkLaf.setup()) {
             return false;
@@ -204,7 +287,7 @@ public class MainFrame {
           break;
         }
 
-      case "white":
+      case "l": // light theme
         {
           if (!FlatLightLaf.setup()) {
             return false;
@@ -225,16 +308,10 @@ public class MainFrame {
     return true;
   }
 
-  //    @Override
-  //    public void actionPerformed(ActionEvent e) {
-  //        if (e.getSource() == deposit) {
-  //            bankAcc.deposit(Double.parseDouble(balanceModifier.getText()));
-  //            balanceDisplay.setText(String.valueOf(bankAcc.getBalance()));
-  //        }
-  //
-  //        if (e.getSource() == withdraw) {
-  //            bankAcc.withdraw(Double.parseDouble(balanceModifier.getText()));
-  //            balanceDisplay.setText(String.valueOf(bankAcc.getBalance()));
-  //        }
-  //    }
+  // initialising the sub-frames container
+  public static void subWindowPaneInit(JFrame mainFrame) {
+    mainFrame.setContentPane(new JDesktopPane());
+    mainFrame.getContentPane().setBounds(0, 0, mainFrame.getWidth(), mainFrame.getHeight());
+    mainFrame.getContentPane().setVisible(true);
+  }
 }

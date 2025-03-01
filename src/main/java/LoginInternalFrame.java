@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.Border;
 
@@ -23,7 +24,7 @@ public class LoginInternalFrame {
             internalFrame, InternalFrame.usernameTextFieldPlaceHolder, font, -100);
 
     // initialising username text-field border
-    Border usernameTextFieldBorder = InternalFrame.borderInit(usernameTextField);
+    InternalFrame.borderInit(usernameTextField);
 
     // initialising username text-field label
     JLabel usernameTextFieldLabel =
@@ -36,7 +37,7 @@ public class LoginInternalFrame {
     passwordTextField.setEchoChar((char) 0);
 
     // initialising password text-field border
-    Border passwordTextFieldBorder = InternalFrame.borderInit(passwordTextField);
+    InternalFrame.borderInit(passwordTextField);
 
     // initialising password text-field label
     JLabel passwordTextFieldLabel =
@@ -99,16 +100,16 @@ public class LoginInternalFrame {
           @Override
           public void actionPerformed(ActionEvent e) {
             try (BufferedReader inFile = new BufferedReader(new FileReader(users_info))) {
-              String line;
 
-              while ((line = inFile.readLine()) != null) {
+              //
+              String userUsername;
+              String userPassword;
 
-                String userUsername;
-                String userPassword;
+              while ((userUsername = inFile.readLine()) != null) {
 
-                if ((!((userUsername = line).isEmpty()) && !(line.equals("default;")))
+                if ((!userUsername.isEmpty() && !userUsername.equals("default;"))
                     && ((userUsername.split(";")[1].equals(usernameTextField.getText()))
-                        && (userPassword = line = inFile.readLine())
+                        && (userPassword = inFile.readLine())
                             .split(";")[1].equals(
                                 String.valueOf(passwordTextField.getPassword())))) {
 
@@ -116,42 +117,59 @@ public class LoginInternalFrame {
                   userUsername = userUsername.split(";")[1];
                   userPassword = userPassword.split(";")[1];
 
-                  String userName = (line = inFile.readLine()).split(";")[1];
-                  String userSurname = (line = inFile.readLine()).split(";")[1];
+                  String userName = inFile.readLine().split(";")[1];
+                  String userSurname = inFile.readLine().split(";")[1];
 
                   // instancing logged user
                   MainFrame.setSessionUser(
-                      new User(
-                          userName,
-                          userSurname,
-                          userUsername,
-                          userPassword,
-                          new File(
-                              "src/main/resources/users/"
-                                  + userName
-                                  + "-"
-                                  + userSurname
-                                  + "-"
-                                  + userUsername
-                                  + ".csv")));
+                      new User(userName, userSurname, userUsername, userPassword));
 
-                  try (BufferedReader inInFile =
-                      new BufferedReader(new FileReader(MainFrame.getSessionUser().getFile()))) {
+                  //
+                  inFile.close();
+
+                  //
+                  if (rememberMe.isSelected()) {
                     //
-                    MainFrame.getSessionUser()
-                        .getBankAccount()
-                        .setBalance(Double.parseDouble(inInFile.readLine().split(";")[1]));
+                    ArrayList<String> fileContent = new ArrayList<>();
 
                     //
-                    MainFrame.getSessionUser()
-                        .setWallet(Double.parseDouble(inInFile.readLine().split(";")[1]));
+                    try (BufferedReader inInFile = new BufferedReader(new FileReader(users_info))) {
+                      String line;
+
+                      //
+                      while ((line = inInFile.readLine()) != null) {
+                        fileContent.add(line);
+                      }
+
+                      //
+                      fileContent.set(
+                          0,
+                          "default;"
+                              + userUsername
+                              + ";"
+                              + userPassword
+                              + ";"
+                              + userName
+                              + ";"
+                              + userSurname);
+                    }
+
+                    //
+                    try (BufferedWriter outFile =
+                        new BufferedWriter(new FileWriter(users_info, false))) {
+
+                      //
+                      for (String i : fileContent) {
+                        outFile.write(i + "\n");
+                      }
+                    }
                   }
 
                   // closing the login/sign-in window
                   loginSignInMainFrame.dispose();
 
                   // instancing main frame for effective use
-                  MainFrame realMainFrame = new MainFrame();
+                  new MainFrame();
 
                   return;
                 }
@@ -171,8 +189,7 @@ public class LoginInternalFrame {
         new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
-            RegisterInternalFrame registerInternalFrame =
-                new RegisterInternalFrame(loginSignInMainFrame, internalFrame, users_info);
+            new RegisterInternalFrame(loginSignInMainFrame, internalFrame, users_info);
           }
         });
 
@@ -235,26 +252,5 @@ public class LoginInternalFrame {
             }
           }
         });
-
-    // if rememberMe is checked it saves the data
-    //        rememberMe.addActionListener(e -> {
-    //            if (rememberMe.isSelected()) {
-    //                try {
-    //                    outFile.write("Default");
-    //                } catch (IOException ex) {
-    //                    throw new RuntimeException(ex);
-    //                }
-    //            }
-    //        });
-
-    //        SwingUtilities.invokeLater(() -> {
-    //            int newX = (subWindowPane.getWidth() - subWindowPane.getWidth()) / 2;
-    //            int newY = (subWindowPane.getHeight() - subWindowPane.getHeight()) / 2;
-    //            internalFrame.setLocation(newX, newY);
-    //        });
-
   }
 }
-
-// JOptionPane.showInternalMessageDialog(internalFrame, "ciao");
-// JOptionPane.showMessageDialog(frame, "Button was pressed!");

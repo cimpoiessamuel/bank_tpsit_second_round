@@ -2,7 +2,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import javax.swing.*;
-import javax.swing.border.Border;
 
 public class InternalFrame {
 
@@ -12,105 +11,164 @@ public class InternalFrame {
   public static String usernameTextFieldPlaceHolder = "Type your username";
   public static String passwordTextFieldPlaceHolder = "Type your password";
 
-  InternalFrame(JFrame mainFrame, JPanel mainPanel, String action) {
+  //
+  InternalFrame(JFrame mainFrame, String action) {
+
+    // saving the default content pane
+    JPanel mainPanel = (JPanel) mainFrame.getContentPane();
 
     //
-    Component[] components = mainPanel.getComponents();
-
-    // remove all the components of the main frame
-    mainFrame.getContentPane().removeAll();
-
-    // initialising internal frames container
-    JDesktopPane subWindowPane = InternalFrame.subWindowPaneInit(mainFrame);
+    MainFrame.subWindowPaneInit(mainFrame);
 
     // main internal frame
-    JInternalFrame internalFrame = internalFrameInit(subWindowPane);
+    JInternalFrame internalFrame = internalFrameInit(mainFrame);
 
     //
-    internalFrame.setTitle("Deposit");
+    internalFrame.setTitle(action);
+
+    //
+    JLabel mainTitle = mainTitle(internalFrame, action.toUpperCase());
 
     //
     JTextField balanceModifier =
-        InternalFrame.textFieldInit(internalFrame, "Import to deposit", null, -100);
+        InternalFrame.textFieldInit(internalFrame, "Import to " + action, null, -100);
 
     //
-    JButton depositButton =
-        InternalFrame.buttonInit(internalFrame, balanceModifier, null, "Deposit", 50);
+    JButton cancelButton =
+        InternalFrame.buttonInit(internalFrame, balanceModifier, null, "Cancel", 100);
 
     //
+    JButton purposeButton =
+        InternalFrame.buttonInit(internalFrame, balanceModifier, null, action, 50);
+
+    //
+    internalFrame.add(mainTitle);
     internalFrame.add(balanceModifier);
-    internalFrame.add(depositButton);
+    internalFrame.add(cancelButton);
+    internalFrame.add(purposeButton);
 
     // setting the internal-frame visible
     internalFrame.setVisible(true);
 
     // everytime the main-frame is resized, the internal-frame is re-centered
-    InternalFrame.autoCenter(mainFrame, internalFrame, subWindowPane);
+    InternalFrame.autoCenter(mainFrame, internalFrame);
 
     // everytime the internal-frame is moved, it re-center itself
     InternalFrame.noMove(mainFrame, internalFrame);
 
     //
-    depositButton.addActionListener(
+    purposeButton.addActionListener(
         new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
+            if (action.equals("Deposit")) {
+
+              //
+              if (!balanceModifier.getText().isEmpty()) {
+                if (!MainFrame.getSessionUser()
+                    .getBankAccount()
+                    .deposit(Double.parseDouble(balanceModifier.getText()))) {
+                  JOptionPane.showInternalMessageDialog(internalFrame, "Import not valid!");
+                }
+              }
+
+            } else if (action.equals("Withdraw")) {
+
+              //
+              if (!balanceModifier.getText().isEmpty()) {
+                if (!MainFrame.getSessionUser()
+                    .getBankAccount()
+                    .withdraw(Double.parseDouble(balanceModifier.getText()))) {
+                  JOptionPane.showInternalMessageDialog(internalFrame, "Import not valid!");
+                }
+              }
+            }
+
+            //
+            mainFrame.setContentPane(mainPanel);
+
+            //
             internalFrame.dispose();
-            mainFrame.dispose();
-            MainFrame mainFrame = new MainFrame();
+          }
+        });
+
+    //
+    cancelButton.addActionListener(
+        new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            //
+            mainFrame.setContentPane(mainPanel);
+
+            //
+            internalFrame.dispose();
+          }
+        });
+
+    //
+    balanceModifier.addKeyListener(
+        new KeyAdapter() {
+          @Override
+          public void keyTyped(KeyEvent e) {
+            char c = e.getKeyChar();
+            if (!Character.isDigit(c) && c != '.') {
+              e.consume();
+            }
+          }
+        });
+
+    // purpose button text-field placeholder
+    balanceModifier.addFocusListener(
+        new FocusAdapter() {
+          @Override
+          public void focusGained(FocusEvent e) {
+            if (balanceModifier.getText().equals("Import to " + action)) {
+              balanceModifier.setText("");
+            }
+          }
+
+          @Override
+          public void focusLost(FocusEvent e) {
+            if (balanceModifier.getText().isEmpty()) {
+              balanceModifier.setText("Import to " + action);
+            }
           }
         });
   }
 
+  //
   InternalFrame(JFrame mainFrame, File users_info) {
 
-    // initialising the sub-frames container
-    JDesktopPane subWindowPane = subWindowPaneInit(mainFrame);
-
-    // setting sub-frames container visible
-    subWindowPane.setVisible(true);
+    //
+    mainFrame.revalidate();
+    mainFrame.repaint();
 
     // initialising main sub-frame
-    JInternalFrame internalFrame = internalFrameInit(subWindowPane);
+    JInternalFrame internalFrame = internalFrameInit(mainFrame);
 
     // instantiating login interface -> the default sub-frame displayed if default user is missing
-    LoginInternalFrame loginInternalFrame =
-        new LoginInternalFrame(mainFrame, internalFrame, users_info);
+    new LoginInternalFrame(mainFrame, internalFrame, users_info);
 
     // everytime the main-frame is resized, the internal-frame is re-centered
-    InternalFrame.autoCenter(mainFrame, internalFrame, subWindowPane);
+    InternalFrame.autoCenter(mainFrame, internalFrame);
 
     // everytime the internal-frame is moved, it re-center itself
     InternalFrame.noMove(mainFrame, internalFrame);
   }
 
-  // initialising the sub-frames container
-  public static JDesktopPane subWindowPaneInit(JFrame mainFrame) {
-    JDesktopPane subWindowPane = new JDesktopPane();
-    subWindowPane.setBounds(0, 0, mainFrame.getWidth(), mainFrame.getHeight());
-
-    // adding subWindow to the main-frame
-    mainFrame.add(subWindowPane, BorderLayout.CENTER);
-
-    // replacing default content pane
-    mainFrame.setContentPane(subWindowPane);
-
-    return subWindowPane;
-  }
-
   // initialising main sub-frame
-  public static JInternalFrame internalFrameInit(JDesktopPane subWindowPane) {
+  public static JInternalFrame internalFrameInit(JFrame mainFrame) {
     JInternalFrame internalFrame = new JInternalFrame("", false, false, false, false);
 
     internalFrame.setSize(500, 700);
     internalFrame.setLayout(null);
     internalFrame.setFocusable(true);
     internalFrame.setLocation(
-        (subWindowPane.getWidth() - internalFrame.getWidth()) / 2,
-        (subWindowPane.getHeight() - internalFrame.getHeight()) / 2);
+        (mainFrame.getContentPane().getWidth() - internalFrame.getWidth()) / 2,
+        (mainFrame.getContentPane().getHeight() - internalFrame.getHeight()) / 2);
 
     // adding the internalFrame to the sub-frames container
-    subWindowPane.add(internalFrame);
+    mainFrame.getContentPane().add(internalFrame);
 
     // initializing the title-bar icon
     internalFrame.setFrameIcon(new ImageIcon("src/main/resources/images/vBank2-rounded-16x16.png"));
@@ -174,11 +232,8 @@ public class InternalFrame {
   }
 
   // initialising generic text-field border
-  public static Border borderInit(JTextField textField) {
-    Border textFieldBorder = BorderFactory.createLineBorder(Color.GRAY, 2, true);
-    textField.setBorder(textFieldBorder);
-
-    return textFieldBorder;
+  public static void borderInit(JTextField textField) {
+    textField.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2, true));
   }
 
   // initialising generic text-field label
@@ -226,21 +281,8 @@ public class InternalFrame {
     return showHidePasswordButton;
   }
 
-  //
-  //  public static List<Component> getAllComponents(Container container, ArrayList<Component>
-  // components) {
-  //    for (Component comp : container.getComponents()) {
-  //      components.add(comp);
-  //
-  //      if (comp instanceof Container) {
-  //        getAllComponents((Container) comp, components);
-  //      }
-  //    }
-  //  }
-
   // everytime the main-frame is resized, the internal-frame is re-centered
-  public static void autoCenter(
-      JFrame mainFrame, JInternalFrame internalFrame, JDesktopPane subWindowPane) {
+  public static void autoCenter(JFrame mainFrame, JInternalFrame internalFrame) {
     mainFrame.addComponentListener(
         new ComponentAdapter() {
           @Override
@@ -254,7 +296,7 @@ public class InternalFrame {
             int xB = mainFrame.getWidth();
             int yB = mainFrame.getHeight();
 
-            subWindowPane.setBounds(0, 0, xB, yB);
+            mainFrame.getContentPane().setBounds(0, 0, xB, yB);
           }
         });
   }
