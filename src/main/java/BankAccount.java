@@ -68,6 +68,10 @@ public class BankAccount {
     this.balance = balance;
   }
 
+  public ArrayList<Transaction> getTransactions() {
+    return transactions;
+  }
+
   public void addTransaction(Transaction t) {
     transactions.add(t);
   }

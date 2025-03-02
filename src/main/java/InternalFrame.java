@@ -5,6 +5,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import javax.swing.*;
+import javax.swing.border.AbstractBorder;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.SoftBevelBorder;
+import javax.swing.border.TitledBorder;
 
 public class InternalFrame {
 
@@ -17,6 +21,108 @@ public class InternalFrame {
   // transaction reasons
   public static String depositTransactionDefault = "Deposit done successfully";
   public static String withdrawTransactionDefault = "Withdraw done successfully";
+
+  //
+  InternalFrame(JFrame mainFrame) {
+
+    // saving the default content pane
+    JPanel mainPanel = (JPanel) mainFrame.getContentPane();
+
+    //
+    MainFrame.subWindowPaneInit(mainFrame);
+
+    //
+    JPanel internalPanel = new JPanel();
+    internalPanel.setLayout(new BoxLayout(internalPanel, BoxLayout.Y_AXIS));
+
+    //
+    JPanel containerPanel = new JPanel();
+    containerPanel.setLayout(new BoxLayout(containerPanel, BoxLayout.Y_AXIS));
+
+    //
+    containerPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+    // main internal frame
+    JInternalFrame internalFrame = internalFrameInit(mainFrame);
+    internalFrame.setContentPane(internalPanel);
+    internalFrame.setTitle("Your Transactions");
+
+    //
+    JLabel mainTitle = mainTitle(internalFrame, "Transactions".toUpperCase());
+    mainTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+    //
+    JButton goBackButton = new JButton("Go back");
+    goBackButton.setPreferredSize(new Dimension(250, 45));
+    goBackButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+    //
+    ArrayList<Transaction> transactions =
+        MainFrame.getSessionUser().getBankAccount().getTransactions();
+
+    //
+    for (Transaction t : transactions) {
+      //
+      JPanel panel = new JPanel();
+      panel.setLayout(new FlowLayout());
+      panel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 2));
+
+      String imagePath = "src/main/resources/images/";
+
+      switch (t.getDescription().split(" ")[0]) {
+        case "Deposit":
+          imagePath += "letter-D-90x90.png";
+          break;
+        case "Withdraw":
+          imagePath += "letter-W-90x90.png";
+          break;
+        case "Investment":
+          imagePath += "letter-I-90x90.png";
+          break;
+      }
+
+      //
+      JLabel purposeLabel = new JLabel(t.getDescription().split(" ")[0] + ": " + t.getAmount());
+      purposeLabel.setIcon(new ImageIcon(imagePath));
+      purposeLabel.setHorizontalTextPosition(JLabel.CENTER);
+      purposeLabel.setVerticalTextPosition(JLabel.BOTTOM);
+
+      //
+      JLabel descLabel = new JLabel("Description: " + t.getDescription());
+
+      //
+      panel.add(purposeLabel);
+      panel.add(descLabel);
+      containerPanel.add(panel);
+    }
+
+    //
+    internalPanel.add(mainTitle);
+    internalPanel.add(new JScrollPane(containerPanel));
+    internalPanel.add(goBackButton);
+
+    // setting the internal-frame visible
+    internalFrame.setVisible(true);
+
+    // everytime the main-frame is resized, the internal-frame is re-centered
+    InternalFrame.autoCenter(mainFrame, internalFrame);
+
+    // everytime the internal-frame is moved, it re-center itself
+    InternalFrame.noMove(mainFrame, internalFrame);
+
+    //
+    goBackButton.addActionListener(
+        new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            //
+            mainFrame.setContentPane(mainPanel);
+
+            //
+            internalFrame.dispose();
+          }
+        });
+  }
 
   //
   InternalFrame(JFrame mainFrame, JLabel balanceDisplay, String action) {
@@ -41,12 +147,10 @@ public class InternalFrame {
         InternalFrame.textFieldInit(internalFrame, "Import to " + action, null, -100);
 
     //
-    JButton cancelButton =
-        InternalFrame.buttonInit(internalFrame, balanceModifier, null, "Cancel", 100);
+    JButton cancelButton = InternalFrame.buttonInit(internalFrame, null, "Cancel", 100);
 
     //
-    JButton purposeButton =
-        InternalFrame.buttonInit(internalFrame, balanceModifier, null, action, 50);
+    JButton purposeButton = InternalFrame.buttonInit(internalFrame, null, action, 50);
 
     //
     internalFrame.add(mainTitle);
@@ -96,8 +200,9 @@ public class InternalFrame {
                     balanceDisplay.setText(
                         "Balance   "
                             + MainFrame.getSessionUser().getBankAccount().getBalance()
-                            + "           Wallet   "
-                            + MainFrame.getSessionUser().getWallet());
+                            + "€           Wallet   "
+                            + MainFrame.getSessionUser().getWallet()
+                            + "€");
 
                     //
                     try (BufferedWriter outFile =
@@ -143,8 +248,9 @@ public class InternalFrame {
                     balanceDisplay.setText(
                         "Balance   "
                             + MainFrame.getSessionUser().getBankAccount().getBalance()
-                            + "           Wallet   "
-                            + MainFrame.getSessionUser().getWallet());
+                            + "€           Wallet   "
+                            + MainFrame.getSessionUser().getWallet()
+                            + "€");
 
                     //
                     try (BufferedWriter outFile =
@@ -351,14 +457,13 @@ public class InternalFrame {
   }
 
   // generic button initialisation
-  public static JButton buttonInit(
-      JInternalFrame internalFrame, JTextField textField, Font font, String purpose, int y) {
+  public static JButton buttonInit(JInternalFrame internalFrame, Font font, String purpose, int y) {
     JButton button = new JButton(purpose);
 
     button.setBounds(0, 0, 250, 45);
     button.setLocation(
-        (internalFrame.getWidth() - textField.getWidth()) / 2,
-        ((internalFrame.getHeight() - textField.getHeight()) / 2) + y);
+        (internalFrame.getWidth() - button.getWidth()) / 2,
+        ((internalFrame.getHeight() - button.getHeight()) / 2) + y);
     button.setFont(font);
 
     return button;

@@ -52,12 +52,10 @@ public class LoginInternalFrame {
             internalFrame, passwordTextField, hidePasswordIcon, 260, 0);
 
     // login button
-    JButton loginButton =
-        InternalFrame.buttonInit(internalFrame, usernameTextField, font, "Login", 90);
+    JButton loginButton = InternalFrame.buttonInit(internalFrame, font, "Login", 90);
 
     // register button
-    JButton registerButton =
-        InternalFrame.buttonInit(internalFrame, usernameTextField, font, "Register", 150);
+    JButton registerButton = InternalFrame.buttonInit(internalFrame, font, "Register", 150);
 
     // remember-me check-box
     JCheckBox rememberMe = new JCheckBox("Keep me logged");

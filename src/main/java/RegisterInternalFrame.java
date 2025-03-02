@@ -81,12 +81,10 @@ public class RegisterInternalFrame {
             internalFrame, passwordTextField, hidePasswordIcon, 260, 140);
 
     // register button
-    JButton registerButton =
-        InternalFrame.buttonInit(internalFrame, usernameTextField, font, "Register", 220);
+    JButton registerButton = InternalFrame.buttonInit(internalFrame, font, "Register", 220);
 
     // go-back button
-    JButton goBackButton =
-        InternalFrame.buttonInit(internalFrame, usernameTextField, font, "Go back", 270);
+    JButton goBackButton = InternalFrame.buttonInit(internalFrame, font, "Go back", 270);
 
     // remove all the components of the previous login interface
     internalFrame.getContentPane().removeAll();

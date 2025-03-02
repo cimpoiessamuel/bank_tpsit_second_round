@@ -25,7 +25,7 @@ public class MainFrame {
     mainFrame.setSize(1600, 1024);
     mainFrame.setLayout(new BorderLayout());
     mainFrame.setLocationRelativeTo(null);
-    mainFrame.setMinimumSize(new Dimension(1280, 720));
+    mainFrame.setMinimumSize(new Dimension(1280, 800));
     mainFrame.setIconImage(
         new ImageIcon("src/main/resources/images/vBank2-rounded.png").getImage());
 
@@ -52,8 +52,9 @@ public class MainFrame {
     balanceDisplay.setText(
         "Balance   "
             + sessionUser.getBankAccount().getBalance()
-            + "           Wallet   "
-            + sessionUser.getWallet());
+            + "€           Wallet   "
+            + sessionUser.getWallet()
+            + "€");
     balanceDisplay.setFont(font);
     balanceDisplay.setHorizontalAlignment(JLabel.CENTER);
 
@@ -164,7 +165,14 @@ public class MainFrame {
     // investment
 
     //
-    // transactions
+    showTransactionsButton.addActionListener(
+        new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            //
+            new InternalFrame(mainFrame);
+          }
+        });
 
     //
     logoutButton.addActionListener(
