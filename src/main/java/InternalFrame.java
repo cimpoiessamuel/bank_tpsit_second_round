@@ -5,10 +5,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import javax.swing.*;
-import javax.swing.border.AbstractBorder;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.SoftBevelBorder;
-import javax.swing.border.TitledBorder;
 
 public class InternalFrame {
 
