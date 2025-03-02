@@ -34,14 +34,12 @@ public class InternalFrame {
     //
     JPanel containerPanel = new JPanel();
     containerPanel.setLayout(new BoxLayout(containerPanel, BoxLayout.Y_AXIS));
-
-    //
-    containerPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    containerPanel.setAlignmentX(Component.CENTER_ALIGNMENT); //
 
     // main internal frame
     JInternalFrame internalFrame = internalFrameInit(mainFrame);
-    internalFrame.setContentPane(internalPanel);
     internalFrame.setTitle("Your Transactions");
+    internalFrame.setContentPane(internalPanel); //
 
     //
     JLabel mainTitle = mainTitle(internalFrame, "Transactions".toUpperCase());
@@ -49,53 +47,75 @@ public class InternalFrame {
 
     //
     JButton goBackButton = new JButton("Go back");
-    goBackButton.setPreferredSize(new Dimension(250, 45));
+    goBackButton.setFont(fontInit(16));
     goBackButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+    goBackButton.setMaximumSize(new Dimension(250, 45)); // size respected by the BoxLayout
+    goBackButton.setMargin(new Insets(13, 0, 13, 0)); // internal button padding
 
     //
     ArrayList<Transaction> transactions =
         MainFrame.getSessionUser().getBankAccount().getTransactions();
 
+    // fonts for trans. cards
+    Font font = fontInit(16);
+
     //
     for (Transaction t : transactions) {
       //
       JPanel panel = new JPanel();
-      panel.setLayout(new FlowLayout());
-      panel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 2));
+      panel.setLayout(new BorderLayout());
+      panel.setBorder(
+          BorderFactory.createCompoundBorder(
+              BorderFactory.createLineBorder(Color.LIGHT_GRAY, 2),
+              BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 
-      String imagePath = "src/main/resources/images/";
-
-      switch (t.getDescription().split(" ")[0]) {
+      //
+      String imagePath = "";
+      switch (t.getDescription().split(" ")[0]) { // extracting purpose
         case "Deposit":
-          imagePath += "letter-D-90x90.png";
+          imagePath = "src/main/resources/images/letter-D-90x90.png";
           break;
         case "Withdraw":
-          imagePath += "letter-W-90x90.png";
+          imagePath = "src/main/resources/images/letter-W-90x90.png";
           break;
         case "Investment":
-          imagePath += "letter-I-90x90.png";
+          imagePath = "src/main/resources/images/letter-I-90x90.png";
           break;
       }
 
       //
-      JLabel purposeLabel = new JLabel(t.getDescription().split(" ")[0] + ": " + t.getAmount());
+      JLabel purposeLabel = new JLabel("Import: " + t.getAmount() + "€");
       purposeLabel.setIcon(new ImageIcon(imagePath));
+      purposeLabel.setFont(font);
       purposeLabel.setHorizontalTextPosition(JLabel.CENTER);
       purposeLabel.setVerticalTextPosition(JLabel.BOTTOM);
 
       //
-      JLabel descLabel = new JLabel("Description: " + t.getDescription());
+      JLabel descLabel = new JLabel(t.toString());
+      descLabel.setPreferredSize(new Dimension(300, 10)); // default size of each card
+      descLabel.setFont(font);
 
       //
-      panel.add(purposeLabel);
-      panel.add(descLabel);
+      panel.add(purposeLabel, BorderLayout.WEST);
+      panel.add(descLabel, BorderLayout.EAST);
       containerPanel.add(panel);
     }
 
     //
     internalPanel.add(mainTitle);
-    internalPanel.add(new JScrollPane(containerPanel));
+    internalPanel.add(Box.createRigidArea(new Dimension(0, 5))); // invisible separator
+    internalPanel.add(
+        new JScrollPane(containerPanel) {
+          {
+            // higher the scroll velocity
+            getVerticalScrollBar().setUnitIncrement(25);
+          }
+        }); // transactions scroll area
+
+    // go back button is separated by 2 invisible areas
+    internalPanel.add(Box.createRigidArea(new Dimension(0, 10)));
     internalPanel.add(goBackButton);
+    internalPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
     // setting the internal-frame visible
     internalFrame.setVisible(true);
@@ -139,14 +159,17 @@ public class InternalFrame {
     JLabel mainTitle = mainTitle(internalFrame, action.toUpperCase());
 
     //
+    Font font = fontInit(16);
+
+    //
     JTextField balanceModifier =
-        InternalFrame.textFieldInit(internalFrame, "Import to " + action, null, -100);
+        InternalFrame.textFieldInit(internalFrame, "Import to " + action, font, -100);
 
     //
-    JButton cancelButton = InternalFrame.buttonInit(internalFrame, null, "Cancel", 100);
+    JButton cancelButton = InternalFrame.buttonInit(internalFrame, font, "Cancel", 100);
 
     //
-    JButton purposeButton = InternalFrame.buttonInit(internalFrame, null, action, 50);
+    JButton purposeButton = InternalFrame.buttonInit(internalFrame, font, action, 50);
 
     //
     internalFrame.add(mainTitle);
@@ -195,9 +218,12 @@ public class InternalFrame {
                     //
                     balanceDisplay.setText(
                         "Balance   "
-                            + MainFrame.getSessionUser().getBankAccount().getBalance()
+                            + Math.round(
+                                    MainFrame.getSessionUser().getBankAccount().getBalance()
+                                        * 100.0)
+                                / 100.0
                             + "€           Wallet   "
-                            + MainFrame.getSessionUser().getWallet()
+                            + Math.round(MainFrame.getSessionUser().getWallet() * 100.0) / 100.0
                             + "€");
 
                     //
@@ -206,10 +232,18 @@ public class InternalFrame {
                             new FileWriter(MainFrame.getSessionUser().getFile(), false))) {
                       //
                       fileContent.set(
-                          0, "balance;" + MainFrame.getSessionUser().getBankAccount().getBalance());
+                          0,
+                          "balance;"
+                              + Math.round(
+                                      MainFrame.getSessionUser().getBankAccount().getBalance()
+                                          * 100.0)
+                                  / 100.0);
 
                       //
-                      fileContent.set(1, "wallet;" + MainFrame.getSessionUser().getWallet());
+                      fileContent.set(
+                          1,
+                          "wallet;"
+                              + Math.round(MainFrame.getSessionUser().getWallet() * 100.0) / 100.0);
 
                       //
                       for (String i : fileContent) {
@@ -243,9 +277,12 @@ public class InternalFrame {
                     //
                     balanceDisplay.setText(
                         "Balance   "
-                            + MainFrame.getSessionUser().getBankAccount().getBalance()
+                            + Math.round(
+                                    MainFrame.getSessionUser().getBankAccount().getBalance()
+                                        * 100.0)
+                                / 100.0
                             + "€           Wallet   "
-                            + MainFrame.getSessionUser().getWallet()
+                            + Math.round(MainFrame.getSessionUser().getWallet() * 100.0) / 100.0
                             + "€");
 
                     //
@@ -254,10 +291,18 @@ public class InternalFrame {
                             new FileWriter(MainFrame.getSessionUser().getFile(), false))) {
                       //
                       fileContent.set(
-                          0, "balance;" + MainFrame.getSessionUser().getBankAccount().getBalance());
+                          0,
+                          "balance;"
+                              + Math.round(
+                                      MainFrame.getSessionUser().getBankAccount().getBalance()
+                                          * 100.0)
+                                  / 100.0);
 
                       //
-                      fileContent.set(1, "wallet;" + MainFrame.getSessionUser().getWallet());
+                      fileContent.set(
+                          1,
+                          "wallet;"
+                              + Math.round(MainFrame.getSessionUser().getWallet() * 100.0) / 100.0);
 
                       //
                       for (String i : fileContent) {
@@ -450,6 +495,11 @@ public class InternalFrame {
     textFieldLabel.setFont(font);
 
     return textFieldLabel;
+  }
+
+  // standard font
+  public static Font fontInit(int size) {
+    return new Font("Arial", Font.PLAIN, size);
   }
 
   // generic button initialisation

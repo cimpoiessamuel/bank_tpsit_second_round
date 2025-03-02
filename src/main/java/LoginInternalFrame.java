@@ -15,7 +15,7 @@ public class LoginInternalFrame {
     JLabel loginMainTitle = InternalFrame.mainTitle(internalFrame, "LOGIN");
 
     // login internal-frame font
-    Font font = new Font("Arial", Font.PLAIN, 16);
+    Font font = InternalFrame.fontInit(16);
 
     // initialising username text-field
     JTextField usernameTextField =
@@ -64,7 +64,7 @@ public class LoginInternalFrame {
     rememberMe.setLocation(
         (internalFrame.getWidth() - passwordTextField.getWidth()) / 2,
         ((internalFrame.getHeight() - passwordTextField.getHeight()) / 2) + 50);
-    rememberMe.setFont(new Font("Arial", Font.PLAIN, 14));
+    rememberMe.setFont(InternalFrame.fontInit(14));
 
     // remove all the components of the previous register interface
     internalFrame.getContentPane().removeAll();

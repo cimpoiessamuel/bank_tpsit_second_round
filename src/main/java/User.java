@@ -76,22 +76,6 @@ public class User {
     }
   }
 
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getSurname() {
-    return surname;
-  }
-
-  public void setSurname(String surname) {
-    this.surname = surname;
-  }
-
   public double getWallet() {
     return wallet;
   }
@@ -104,18 +88,11 @@ public class User {
     return stats;
   }
 
-  public String getUsername() {
-    return username;
-  }
-
   public BankAccount getBankAccount() {
     return bankAccount;
   }
 
-  public void setStats(File s) {
-    this.stats = s;
-  }
-
+  @Override
   public String toString() {
     return surname + ", " + name;
   }

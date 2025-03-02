@@ -30,7 +30,7 @@ public class MainFrame {
         new ImageIcon("src/main/resources/images/vBank2-rounded.png").getImage());
 
     // main frame font
-    Font font = new Font("Arial", Font.PLAIN, 20);
+    Font font = InternalFrame.fontInit(20);
 
     // profile panel
     JPanel profilePanel = new JPanel();

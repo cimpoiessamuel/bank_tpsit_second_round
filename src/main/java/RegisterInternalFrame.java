@@ -20,7 +20,7 @@ public class RegisterInternalFrame {
     JLabel registerMainTitle = InternalFrame.mainTitle(internalFrame, "SIGN IN");
 
     // register internal-frame font
-    Font font = new Font("Arial", Font.PLAIN, 16);
+    Font font = InternalFrame.fontInit(16);
 
     // initialising name text-field
     JTextField nameTextField =

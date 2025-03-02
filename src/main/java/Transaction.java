@@ -32,11 +32,16 @@ public class Transaction {
     return amount;
   }
 
-  public String getDate() {
-    return date;
-  }
-
   public String getDescription() {
     return description;
+  }
+
+  @Override
+  public String toString() {
+    return "<html><b>Description:</b><br>"
+        + description
+        + "<br><br><b>Date: </b>"
+        + date
+        + "</html>";
   }
 }
