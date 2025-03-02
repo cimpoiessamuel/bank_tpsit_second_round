@@ -130,7 +130,7 @@ public class RegisterInternalFrame {
               if (!usernameTextField.getText().isEmpty()
                   && !usernameTextField.getText().equals(InternalFrame.usernameTextFieldPlaceHolder)
                   && usernameTextField.getText().length() > 3) {
-                newUserInfo += "\nusername;" + usernameTextField.getText();
+                newUserInfo += "username;" + usernameTextField.getText();
               } else {
                 JOptionPane.showInternalMessageDialog(
                     internalFrame, "Username must be at least 4 digits long");

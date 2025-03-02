@@ -25,6 +25,7 @@ public class MainFrame {
     mainFrame.setSize(1600, 1024);
     mainFrame.setLayout(new BorderLayout());
     mainFrame.setLocationRelativeTo(null);
+    mainFrame.setMinimumSize(new Dimension(1280, 720));
     mainFrame.setIconImage(
         new ImageIcon("src/main/resources/images/vBank2-rounded.png").getImage());
 
@@ -145,7 +146,7 @@ public class MainFrame {
           @Override
           public void actionPerformed(ActionEvent e) {
             //
-            new InternalFrame(mainFrame, "Deposit");
+            new InternalFrame(mainFrame, balanceDisplay, "Deposit");
           }
         });
 
@@ -155,7 +156,7 @@ public class MainFrame {
           @Override
           public void actionPerformed(ActionEvent e) {
             //
-            new InternalFrame(mainFrame, "Withdraw");
+            new InternalFrame(mainFrame, balanceDisplay, "Withdraw");
           }
         });
 
@@ -170,20 +171,17 @@ public class MainFrame {
         new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
-
             //
-            File users_info = new File("src/main/resources/users_info.csv");
+            File users_info = new File("src/main/resources/users-info.csv");
 
             //
             ArrayList<String> fileContent = new ArrayList<>();
 
             try {
-
               //
               try (BufferedReader inFile = new BufferedReader(new FileReader(users_info))) {
-                String line;
-
                 //
+                String line;
                 while ((line = inFile.readLine()) != null) {
                   fileContent.add(line);
                 }
@@ -194,7 +192,6 @@ public class MainFrame {
 
               //
               try (BufferedWriter outFile = new BufferedWriter(new FileWriter(users_info, false))) {
-
                 //
                 for (String i : fileContent) {
                   outFile.write(i + "\n");
@@ -204,21 +201,11 @@ public class MainFrame {
               System.err.println("log-out default user failure");
             }
 
-            //
-            MainFrame.setSessionUser(null);
+            // arresting current main frame
+            mainFrame.dispose();
 
-            // initialising main frame
-            //            JFrame mainFrame = new JFrame("Volksbank App");
-            //            mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            //            mainFrame.setSize(1600, 1024);
-            //            mainFrame.setLayout(new BorderLayout());
-            //            mainFrame.setLocationRelativeTo(null);
-            //            mainFrame.setIconImage(
-            //                new
-            // ImageIcon("src/main/resources/images/vBank2-rounded.png").getImage());
-
-            //
-            new InternalFrame(mainFrame, users_info);
+            // instancing new main frame for authentication
+            new MainFrame(users_info);
           }
         });
 
@@ -227,6 +214,7 @@ public class MainFrame {
         new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
+            // arresting current main frame
             mainFrame.dispose();
           }
         });
@@ -247,6 +235,7 @@ public class MainFrame {
     mainFrame.setSize(1600, 1024);
     mainFrame.setLayout(null);
     mainFrame.setLocationRelativeTo(null);
+    mainFrame.setMinimumSize(new Dimension(700, 800));
     mainFrame.setIconImage(
         new ImageIcon("src/main/resources/images/vBank2-rounded.png").getImage());
 

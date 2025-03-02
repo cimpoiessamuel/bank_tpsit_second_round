@@ -10,7 +10,6 @@ public class User {
 
   private File stats; // data saves for each registered user
 
-  // constructor
   User(String name, String surname, String username, String password) {
 
     this.name = name;
@@ -57,12 +56,18 @@ public class User {
 
         System.out.println("users stats created");
       } else {
+        //
+        String balanceValue;
+        String walletValue;
 
+        //
         try (BufferedReader inFile = new BufferedReader(new FileReader(this.stats))) {
-          this.bankAccount =
-              new BankAccount(this, Double.parseDouble(inFile.readLine().split(";")[1]));
-          this.wallet = Double.parseDouble(inFile.readLine().split(";")[1]);
+          balanceValue = inFile.readLine().split(";")[1];
+          walletValue = inFile.readLine().split(";")[1];
         }
+
+        this.bankAccount = new BankAccount(this, Double.parseDouble(balanceValue));
+        this.wallet = Double.parseDouble(walletValue);
 
         System.out.println("users stats already exists");
       }

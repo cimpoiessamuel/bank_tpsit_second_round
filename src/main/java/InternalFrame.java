@@ -1,7 +1,10 @@
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
+import java.io.*;
 import javax.swing.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 public class InternalFrame {
 
@@ -11,8 +14,12 @@ public class InternalFrame {
   public static String usernameTextFieldPlaceHolder = "Type your username";
   public static String passwordTextFieldPlaceHolder = "Type your password";
 
+  // transaction reasons
+  public static String depositTransactionDefault = "Deposit done successfully";
+  public static String withdrawTransactionDefault = "Withdraw done successfully";
+
   //
-  InternalFrame(JFrame mainFrame, String action) {
+  InternalFrame(JFrame mainFrame, JLabel balanceDisplay, String action) {
 
     // saving the default content pane
     JPanel mainPanel = (JPanel) mainFrame.getContentPane();
@@ -61,26 +68,119 @@ public class InternalFrame {
         new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
-            if (action.equals("Deposit")) {
 
-              //
-              if (!balanceModifier.getText().isEmpty()) {
-                if (!MainFrame.getSessionUser()
-                    .getBankAccount()
-                    .deposit(Double.parseDouble(balanceModifier.getText()))) {
-                  JOptionPane.showInternalMessageDialog(internalFrame, "Import not valid!");
+            if (!balanceModifier.getText().isEmpty()) {
+
+              try {
+                //
+                ArrayList<String> fileContent = new ArrayList<>();
+
+                try (BufferedReader inFile =
+                    new BufferedReader(new FileReader(MainFrame.getSessionUser().getFile()))) {
+                  //
+                  String line;
+                  while ((line = inFile.readLine()) != null) {
+                    fileContent.add(line);
+                  }
                 }
-              }
 
-            } else if (action.equals("Withdraw")) {
+                // Deposit action
+                if (action.equals("Deposit")) {
 
-              //
-              if (!balanceModifier.getText().isEmpty()) {
-                if (!MainFrame.getSessionUser()
-                    .getBankAccount()
-                    .withdraw(Double.parseDouble(balanceModifier.getText()))) {
-                  JOptionPane.showInternalMessageDialog(internalFrame, "Import not valid!");
+                  // check if deposit is valid
+                  if (MainFrame.getSessionUser()
+                      .getBankAccount()
+                      .deposit(Double.parseDouble(balanceModifier.getText()))) {
+
+                    //
+                    balanceDisplay.setText(
+                        "Balance   "
+                            + MainFrame.getSessionUser().getBankAccount().getBalance()
+                            + "           Wallet   "
+                            + MainFrame.getSessionUser().getWallet());
+
+                    //
+                    try (BufferedWriter outFile =
+                        new BufferedWriter(
+                            new FileWriter(MainFrame.getSessionUser().getFile(), false))) {
+                      //
+                      fileContent.set(
+                          0, "balance;" + MainFrame.getSessionUser().getBankAccount().getBalance());
+
+                      //
+                      fileContent.set(1, "wallet;" + MainFrame.getSessionUser().getWallet());
+
+                      //
+                      for (String i : fileContent) {
+                        outFile.write(i + "\n");
+                      }
+                    }
+
+                    //
+                    MainFrame.getSessionUser()
+                        .getBankAccount()
+                        .addTransaction(
+                            new Transaction(
+                                Double.parseDouble(balanceModifier.getText()),
+                                LocalDateTime.now()
+                                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
+                                depositTransactionDefault,
+                                MainFrame.getSessionUser()));
+
+                  } else {
+                    JOptionPane.showInternalMessageDialog(internalFrame, "Import not valid!");
+                  }
+
+                  // Withdraw action
+                } else if (action.equals("Withdraw")) {
+
+                  //
+                  if (MainFrame.getSessionUser()
+                      .getBankAccount()
+                      .withdraw(Double.parseDouble(balanceModifier.getText()))) {
+
+                    //
+                    balanceDisplay.setText(
+                        "Balance   "
+                            + MainFrame.getSessionUser().getBankAccount().getBalance()
+                            + "           Wallet   "
+                            + MainFrame.getSessionUser().getWallet());
+
+                    //
+                    try (BufferedWriter outFile =
+                        new BufferedWriter(
+                            new FileWriter(MainFrame.getSessionUser().getFile(), false))) {
+                      //
+                      fileContent.set(
+                          0, "balance;" + MainFrame.getSessionUser().getBankAccount().getBalance());
+
+                      //
+                      fileContent.set(1, "wallet;" + MainFrame.getSessionUser().getWallet());
+
+                      //
+                      for (String i : fileContent) {
+                        outFile.write(i + "\n");
+                      }
+                    }
+
+                    //
+                    MainFrame.getSessionUser()
+                        .getBankAccount()
+                        .addTransaction(
+                            new Transaction(
+                                Double.parseDouble(balanceModifier.getText()),
+                                LocalDateTime.now()
+                                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
+                                withdrawTransactionDefault,
+                                MainFrame.getSessionUser()));
+
+                  } else {
+                    JOptionPane.showInternalMessageDialog(internalFrame, "Import not valid!");
+                  }
                 }
+
+              } catch (IOException exc) {
+                System.err.println("balance update failed");
               }
             }
 
