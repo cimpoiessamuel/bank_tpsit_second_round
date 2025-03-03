@@ -14,7 +14,6 @@ import java.util.TimerTask;
 public class MainFrame {
 
   private static User sessionUser;
-  private static boolean timerRunning;
 
   // main-frame instanced for effective use
   MainFrame() {
@@ -23,9 +22,6 @@ public class MainFrame {
     if (!setTheme("l")) {
       System.err.println("theme init failure");
     }
-
-    //
-    timerRunning = false;
 
     // initialising main frame
     JFrame mainFrame = new JFrame("Volksbank App");
@@ -260,35 +256,27 @@ public class MainFrame {
         new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
+            //
+            skipMonthButton.setEnabled(false);
+            exitButton.setEnabled(false);
+            mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-            if (!timerRunning) {
-              //
-              timerRunning = true;
+            //
+            walletMonthlyIncome();
 
-              //
-              exitButton.setEnabled(false);
-              mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-
-              //
-              walletMonthlyIncome();
-
-              //
-              balanceDisplay.setText(
-                  "Balance   "
-                      + Math.round(sessionUser.getBankAccount().getBalance() * 100.0) / 100.0
-                      + "€           Wallet   "
-                      + Math.round(sessionUser.getWallet() * 100.0) / 100.0
-                      + "€");
-            } else {
-              System.err.println("timer already running");
-              return;
-            }
+            //
+            balanceDisplay.setText(
+                "Balance   "
+                    + Math.round(sessionUser.getBankAccount().getBalance() * 100.0) / 100.0
+                    + "€           Wallet   "
+                    + Math.round(sessionUser.getWallet() * 100.0) / 100.0
+                    + "€");
 
             //
             Timer timer = new Timer();
             TimerTask timerTask =
                 new TimerTask() {
-                  int seconds = 5;
+                  int seconds = 120;
 
                   @Override
                   public void run() {
@@ -296,27 +284,25 @@ public class MainFrame {
                       //
                       counterLabel.setText("Time left: " + seconds);
 
-                      //
                       System.out.println("remaining: " + seconds);
                       seconds--;
                     } else {
+
                       //
                       counterLabel.setText("");
 
-                      //
                       System.out.println("time done");
                       timer.cancel();
 
                       //
-                      timerRunning = false;
-
-                      //
+                      skipMonthButton.setEnabled(true);
                       exitButton.setEnabled(true);
                       mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                     }
                   }
                 };
 
+            //
             timer.scheduleAtFixedRate(timerTask, 0, 1000);
           }
         });
