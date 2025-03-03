@@ -17,6 +17,7 @@ public class InternalFrame {
   // transaction reasons
   public static String depositTransactionDefault = "Deposit done successfully";
   public static String withdrawTransactionDefault = "Withdraw done successfully";
+  public static String monthlyIncomeDefault = "Monthly wallet income";
 
   //
   InternalFrame(JFrame mainFrame) {
@@ -80,6 +81,9 @@ public class InternalFrame {
           break;
         case "Investment":
           imagePath = "src/main/resources/images/letter-I-90x90.png";
+          break;
+        case "Monthly":
+          imagePath = "src/main/resources/images/wallet-90x90.png";
           break;
       }
 

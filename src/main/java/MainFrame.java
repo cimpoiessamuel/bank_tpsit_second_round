@@ -4,12 +4,17 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import javax.swing.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainFrame {
 
   private static User sessionUser;
+  private static boolean timerRunning;
 
   // main-frame instanced for effective use
   MainFrame() {
@@ -18,6 +23,9 @@ public class MainFrame {
     if (!setTheme("l")) {
       System.err.println("theme init failure");
     }
+
+    //
+    timerRunning = false;
 
     // initialising main frame
     JFrame mainFrame = new JFrame("Volksbank App");
@@ -47,6 +55,10 @@ public class MainFrame {
     profileLabel.setHorizontalTextPosition(JLabel.RIGHT);
     profileLabel.setVerticalTextPosition(JLabel.CENTER);
 
+    //
+    JPanel southPanel = new JPanel();
+    southPanel.setLayout(new FlowLayout());
+
     // balance label
     JLabel balanceDisplay = new JLabel();
     balanceDisplay.setText(
@@ -58,9 +70,25 @@ public class MainFrame {
     balanceDisplay.setFont(font);
     balanceDisplay.setHorizontalAlignment(JLabel.CENTER);
 
+    //
+    JButton skipMonthButton = new JButton("Skip to next month");
+    skipMonthButton.setFont(InternalFrame.fontInit(16));
+    skipMonthButton.setPreferredSize(new Dimension(200, 45));
+
+    //
+    JLabel counterLabel = new JLabel();
+    counterLabel.setFont(font);
+
+    //
+    southPanel.add(balanceDisplay);
+    southPanel.add(Box.createRigidArea(new Dimension(100, 0))); //
+    southPanel.add(skipMonthButton);
+    southPanel.add(Box.createRigidArea(new Dimension(50, 0))); //
+    southPanel.add(counterLabel);
+
     // adding to profile panel
     profilePanel.add(profileLabel, BorderLayout.WEST);
-    profilePanel.add(balanceDisplay, BorderLayout.SOUTH);
+    profilePanel.add(southPanel, BorderLayout.SOUTH);
 
     //
     JPanel actionsPanel = new JPanel();
@@ -226,6 +254,72 @@ public class MainFrame {
             mainFrame.dispose();
           }
         });
+
+    //
+    skipMonthButton.addActionListener(
+        new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+
+            if (!timerRunning) {
+              //
+              timerRunning = true;
+
+              //
+              exitButton.setEnabled(false);
+              mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+              //
+              walletMonthlyIncome();
+
+              //
+              balanceDisplay.setText(
+                  "Balance   "
+                      + Math.round(sessionUser.getBankAccount().getBalance() * 100.0) / 100.0
+                      + "€           Wallet   "
+                      + Math.round(sessionUser.getWallet() * 100.0) / 100.0
+                      + "€");
+            } else {
+              System.err.println("timer already running");
+              return;
+            }
+
+            //
+            Timer timer = new Timer();
+            TimerTask timerTask =
+                new TimerTask() {
+                  int seconds = 5;
+
+                  @Override
+                  public void run() {
+                    if (seconds > 0) {
+                      //
+                      counterLabel.setText("Time left: " + seconds);
+
+                      //
+                      System.out.println("remaining: " + seconds);
+                      seconds--;
+                    } else {
+                      //
+                      counterLabel.setText("");
+
+                      //
+                      System.out.println("time done");
+                      timer.cancel();
+
+                      //
+                      timerRunning = false;
+
+                      //
+                      exitButton.setEnabled(true);
+                      mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                    }
+                  }
+                };
+
+            timer.scheduleAtFixedRate(timerTask, 0, 1000);
+          }
+        });
   }
 
   // main-frame instanced for authentication
@@ -310,5 +404,48 @@ public class MainFrame {
     mainFrame.setContentPane(new JDesktopPane());
     mainFrame.getContentPane().setBounds(0, 0, mainFrame.getWidth(), mainFrame.getHeight());
     mainFrame.getContentPane().setVisible(true);
+  }
+
+  public static void walletMonthlyIncome() {
+    //
+    sessionUser.monthlyIncome();
+
+    //
+    try {
+      //
+      ArrayList<String> fileContent = new ArrayList<>();
+
+      try (BufferedReader inFile = new BufferedReader(new FileReader(sessionUser.getFile()))) {
+        //
+        String line;
+        while ((line = inFile.readLine()) != null) {
+          fileContent.add(line);
+        }
+
+        //
+        fileContent.set(1, "wallet;" + sessionUser.getWallet());
+      }
+
+      try (BufferedWriter outFile =
+          new BufferedWriter(new FileWriter(sessionUser.getFile(), false))) {
+        //
+        for (String i : fileContent) {
+          outFile.write(i + "\n");
+        }
+      }
+
+      //
+      sessionUser
+          .getBankAccount()
+          .addTransaction(
+              new Transaction(
+                  100.0,
+                  LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
+                  InternalFrame.monthlyIncomeDefault,
+                  sessionUser));
+
+    } catch (IOException e) {
+      System.err.println("monthly income failure");
+    }
   }
 }

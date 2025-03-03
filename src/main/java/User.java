@@ -76,6 +76,10 @@ public class User {
     }
   }
 
+  public void monthlyIncome() {
+    wallet += 100;
+  }
+
   public double getWallet() {
     return wallet;
   }
