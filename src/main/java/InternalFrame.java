@@ -17,6 +17,7 @@ public class InternalFrame {
   // transaction reasons
   public static String depositTransactionDefault = "Deposit done successfully";
   public static String withdrawTransactionDefault = "Withdraw done successfully";
+  public static String investmentTransactionDefault = "Investment done successfully";
   public static String monthlyIncomeDefault = "Monthly wallet income";
 
   //
@@ -100,8 +101,20 @@ public class InternalFrame {
       descLabel.setFont(font);
 
       //
+      //      if (t.getDescription().split(" ")[0].equals("Investment")) {
+      //        //
+      //        JButton showGraphButton = new JButton("Show graph");
+      //        showGraphButton.setPreferredSize(new Dimension(100,45));
+      //
+      //        //
+      //        panel.add(showGraphButton, BorderLayout.CENTER);
+      //      }
+
+      //
       panel.add(purposeLabel, BorderLayout.WEST);
       panel.add(descLabel, BorderLayout.EAST);
+
+      //
       containerPanel.add(panel);
     }
 
@@ -170,10 +183,48 @@ public class InternalFrame {
         InternalFrame.textFieldInit(internalFrame, "Import to " + action, font, -100);
 
     //
-    JButton cancelButton = InternalFrame.buttonInit(internalFrame, font, "Cancel", 100);
+    JButton purposeButton = InternalFrame.buttonInit(internalFrame, font, action, 130);
 
     //
-    JButton purposeButton = InternalFrame.buttonInit(internalFrame, font, action, 50);
+    JButton cancelButton = InternalFrame.buttonInit(internalFrame, font, "Cancel", 180);
+
+    //
+    JComboBox<String> periodBox = new JComboBox<>(new String[] {"Short", "Medium", "Long"});
+    JComboBox<String> riskBox = new JComboBox<>(new String[] {"Low", "Medium", "High"});
+
+    //
+    if (action.equals("Invest")) {
+      //
+      JLabel periodLabel = labelInit(internalFrame, balanceModifier, font, "Period", -60);
+
+      //
+      periodBox.setFont(font);
+      periodBox.setBounds(0, 0, 250, 45);
+      periodBox.setLocation(
+          (internalFrame.getWidth() - periodBox.getWidth()) / 2,
+          ((internalFrame.getHeight() - periodBox.getHeight()) / 2) + (-25));
+
+      //
+      internalFrame.add(periodLabel);
+      internalFrame.add(periodBox);
+
+      //
+      JLabel riskLabel = labelInit(internalFrame, balanceModifier, font, "Risk", 20);
+
+      //
+      riskBox.setFont(font);
+      riskBox.setBounds(0, 0, 250, 45);
+      riskBox.setLocation(
+          (internalFrame.getWidth() - riskBox.getWidth()) / 2,
+          ((internalFrame.getHeight() - riskBox.getHeight()) / 2) + (55));
+
+      //
+      internalFrame.add(riskLabel);
+      internalFrame.add(riskBox);
+    } else {
+      periodBox.setVisible(false);
+      riskBox.setVisible(false);
+    }
 
     //
     internalFrame.add(mainTitle);
@@ -327,6 +378,66 @@ public class InternalFrame {
 
                   } else {
                     JOptionPane.showInternalMessageDialog(internalFrame, "Import not valid!");
+                  }
+                } else if (action.equals("Invest")) {
+
+                  //
+                  if (MainFrame.getSessionUser()
+                      .getBankAccount()
+                      .invest(
+                          Double.parseDouble(balanceModifier.getText()),
+                          (String) periodBox.getSelectedItem(),
+                          (String) riskBox.getSelectedItem())) {
+
+                    //
+                    balanceDisplay.setText(
+                        "Balance   "
+                            + Math.round(
+                                    MainFrame.getSessionUser().getBankAccount().getBalance()
+                                        * 100.0)
+                                / 100.0
+                            + "€           Wallet   "
+                            + Math.round(MainFrame.getSessionUser().getWallet() * 100.0) / 100.0
+                            + "€");
+
+                    //
+                    try (BufferedWriter outFile =
+                        new BufferedWriter(
+                            new FileWriter(MainFrame.getSessionUser().getFile(), false))) {
+                      //
+                      fileContent.set(
+                          0,
+                          "balance;"
+                              + Math.round(
+                                      MainFrame.getSessionUser().getBankAccount().getBalance()
+                                          * 100.0)
+                                  / 100.0);
+
+                      //
+                      fileContent.set(
+                          1,
+                          "wallet;"
+                              + Math.round(MainFrame.getSessionUser().getWallet() * 100.0) / 100.0);
+
+                      //
+                      for (String i : fileContent) {
+                        outFile.write(i + "\n");
+                      }
+                    }
+
+                    //
+                    MainFrame.getSessionUser()
+                        .getBankAccount()
+                        .addTransaction(
+                            new Transaction(
+                                Double.parseDouble(balanceModifier.getText()),
+                                LocalDateTime.now()
+                                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
+                                investmentTransactionDefault,
+                                MainFrame.getSessionUser()));
+
+                  } else {
+                    JOptionPane.showInternalMessageDialog(internalFrame, "Insufficient founds!");
                   }
                 }
 

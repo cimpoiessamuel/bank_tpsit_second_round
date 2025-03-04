@@ -186,7 +186,14 @@ public class MainFrame {
         });
 
     //
-    // investment
+    investButton.addActionListener(
+        new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            //
+            new InternalFrame(mainFrame, balanceDisplay, "Invest");
+          }
+        });
 
     //
     showTransactionsButton.addActionListener(
@@ -258,6 +265,7 @@ public class MainFrame {
           public void actionPerformed(ActionEvent e) {
             //
             skipMonthButton.setEnabled(false);
+            logoutButton.setEnabled(false);
             exitButton.setEnabled(false);
             mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
@@ -296,6 +304,7 @@ public class MainFrame {
 
                       //
                       skipMonthButton.setEnabled(true);
+                      logoutButton.setEnabled(true);
                       exitButton.setEnabled(true);
                       mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                     }

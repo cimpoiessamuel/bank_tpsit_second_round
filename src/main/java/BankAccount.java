@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class BankAccount {
   private final User user;
@@ -58,6 +59,66 @@ public class BankAccount {
     }
 
     return false;
+  }
+
+  public boolean invest(double amount, String period, String risk) {
+    if (amount > balance || balance <= 0) {
+      return false;
+    }
+
+    //
+    balance -= amount;
+
+    //
+    int _period =
+        switch (period) {
+          case "Short" -> 90;
+          case "Medium" -> 180;
+          case "Long" -> 360;
+          default -> 0;
+        };
+
+    //
+    double _risk =
+        switch (risk) {
+          case "Low" -> amount * 3;
+          case "Medium" -> amount * 6;
+          case "High" -> amount * 11;
+          default -> 0;
+        };
+
+    //
+    double _amount = amount;
+
+    //
+    for (int i = 1; i <= _period; i++) {
+      //
+      _amount = new Random().nextDouble(_risk);
+
+      //
+      if (new Random().nextInt(1000) % 2 == 0) {
+        _amount = -_amount;
+      }
+
+      //
+      if (i % 30 == 0) {
+        MainFrame.walletMonthlyIncome();
+      }
+    }
+
+    if (risk.equals("Low") && (_amount < 0.7 * amount)) {
+      //
+      _amount = Math.abs(_amount) * 0.7;
+
+    } else if (risk.equals("Medium") && (_amount < 0.4 * amount)) {
+      //
+      _amount = Math.abs(amount) * 0.4;
+    }
+
+    //
+    balance += _amount;
+
+    return true; // LocalDateTime.now().getMonthValue();
   }
 
   public double getBalance() {
