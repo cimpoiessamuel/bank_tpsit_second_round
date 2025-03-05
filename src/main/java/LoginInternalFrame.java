@@ -97,7 +97,6 @@ public class LoginInternalFrame {
           @Override
           public void actionPerformed(ActionEvent e) {
             try (BufferedReader inFile = new BufferedReader(new FileReader(users_info))) {
-
               //
               String userUsername;
               String userPassword;
@@ -127,39 +126,23 @@ public class LoginInternalFrame {
                   //
                   if (rememberMe.isSelected()) {
                     //
-                    ArrayList<String> fileContent = new ArrayList<>();
+                    ArrayList<String> fileContent =
+                        MainFrame.getFileContent(MainFrame.getUsersInfo());
 
                     //
-                    try (BufferedReader inInFile = new BufferedReader(new FileReader(users_info))) {
-                      String line;
-
-                      //
-                      while ((line = inInFile.readLine()) != null) {
-                        fileContent.add(line);
-                      }
-
-                      //
-                      fileContent.set(
-                          0,
-                          "default;"
-                              + userUsername
-                              + ";"
-                              + userPassword
-                              + ";"
-                              + userName
-                              + ";"
-                              + userSurname);
-                    }
+                    fileContent.set(
+                        0,
+                        "default;"
+                            + userUsername
+                            + ";"
+                            + userPassword
+                            + ";"
+                            + userName
+                            + ";"
+                            + userSurname);
 
                     //
-                    try (BufferedWriter outFile =
-                        new BufferedWriter(new FileWriter(users_info, false))) {
-
-                      //
-                      for (String i : fileContent) {
-                        outFile.write(i + "\n");
-                      }
-                    }
+                    MainFrame.writeFileContent(fileContent, MainFrame.getUsersInfo());
                   }
 
                   // closing the login/sign-in window
@@ -174,7 +157,6 @@ public class LoginInternalFrame {
 
               // if user not found, then notify
               JOptionPane.showInternalMessageDialog(internalFrame, "User not found");
-
             } catch (IOException exc) {
               System.err.println("login failure");
             }

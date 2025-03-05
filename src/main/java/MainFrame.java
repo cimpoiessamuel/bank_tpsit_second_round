@@ -13,6 +13,7 @@ import javax.swing.*;
 
 public class MainFrame {
 
+  private static final File usersInfo = new File("src/main/resources/users-info.csv");
   private static User sessionUser;
 
   // main-frame instanced for effective use
@@ -23,9 +24,12 @@ public class MainFrame {
       System.err.println("theme init failure");
     }
 
+    //
+    MainFrame.getSessionUser().getBankAccount().readTransactions();
+
     // initialising main frame
     JFrame mainFrame = new JFrame("Volksbank App");
-    mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     mainFrame.setSize(1600, 1024);
     mainFrame.setLayout(new BorderLayout());
     mainFrame.setLocationRelativeTo(null);
@@ -210,41 +214,24 @@ public class MainFrame {
         new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
-            //
-            File users_info = new File("src/main/resources/users-info.csv");
 
             //
-            ArrayList<String> fileContent = new ArrayList<>();
+            ArrayList<String> fileContent = getFileContent(usersInfo);
 
-            try {
-              //
-              try (BufferedReader inFile = new BufferedReader(new FileReader(users_info))) {
-                //
-                String line;
-                while ((line = inFile.readLine()) != null) {
-                  fileContent.add(line);
-                }
+            //
+            fileContent.set(0, "default;");
 
-                //
-                fileContent.set(0, "default;");
-              }
+            //
+            fileContent.set(1, "TransID;" + Transaction.getIDCounter());
 
-              //
-              try (BufferedWriter outFile = new BufferedWriter(new FileWriter(users_info, false))) {
-                //
-                for (String i : fileContent) {
-                  outFile.write(i + "\n");
-                }
-              }
-            } catch (IOException exc) {
-              System.err.println("log-out default user failure");
-            }
+            //
+            writeFileContent(fileContent, usersInfo);
 
             // arresting current main frame
             mainFrame.dispose();
 
             // instancing new main frame for authentication
-            new MainFrame(users_info);
+            new MainFrame(usersInfo);
           }
         });
 
@@ -253,7 +240,16 @@ public class MainFrame {
         new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
-            // arresting current main frame
+            //
+            ArrayList<String> fileContent = getFileContent(usersInfo);
+
+            //
+            fileContent.set(1, "TransID;" + Transaction.getIDCounter());
+
+            //
+            writeFileContent(fileContent, usersInfo);
+
+            // close current main frame
             mainFrame.dispose();
           }
         });
@@ -355,6 +351,10 @@ public class MainFrame {
     }
   }
 
+  public static File getUsersInfo() {
+    return usersInfo;
+  }
+
   public static User getSessionUser() {
     return sessionUser;
   }
@@ -363,6 +363,7 @@ public class MainFrame {
     sessionUser = u;
   }
 
+  //
   private boolean setTheme(String theme) {
     switch (theme) {
       case "d": // dark theme
@@ -401,6 +402,7 @@ public class MainFrame {
     mainFrame.getContentPane().setVisible(true);
   }
 
+  //
   public static void walletMonthlyIncome() {
     //
     sessionUser.monthlyIncome();
@@ -416,10 +418,10 @@ public class MainFrame {
         while ((line = inFile.readLine()) != null) {
           fileContent.add(line);
         }
-
-        //
-        fileContent.set(1, "wallet;" + sessionUser.getWallet());
       }
+
+      //
+      fileContent.set(1, "wallet;" + sessionUser.getWallet());
 
       try (BufferedWriter outFile =
           new BufferedWriter(new FileWriter(sessionUser.getFile(), false))) {
@@ -441,6 +443,38 @@ public class MainFrame {
 
     } catch (IOException e) {
       System.err.println("monthly income failure");
+    }
+  }
+
+  //
+  public static ArrayList<String> getFileContent(File file) {
+    //
+    ArrayList<String> fileContent = new ArrayList<>();
+
+    //
+    try (BufferedReader inFile = new BufferedReader(new FileReader(file))) {
+      //
+      String line;
+      while ((line = inFile.readLine()) != null) {
+        fileContent.add(line);
+      }
+    } catch (IOException e) {
+      System.err.println("sessionUser file copy failed");
+    }
+
+    return fileContent;
+  }
+
+  //
+  public static void writeFileContent(ArrayList<String> fileContent, File file) {
+    //
+    try (BufferedWriter outFile = new BufferedWriter(new FileWriter(file, false))) {
+      //
+      for (String i : fileContent) {
+        outFile.write(i + "\n");
+      }
+    } catch (IOException e) {
+      System.err.println("re-writing file failed");
     }
   }
 }

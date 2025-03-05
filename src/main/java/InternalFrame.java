@@ -18,6 +18,7 @@ public class InternalFrame {
   public static String depositTransactionDefault = "Deposit done successfully";
   public static String withdrawTransactionDefault = "Withdraw done successfully";
   public static String investmentTransactionDefault = "Investment done successfully";
+  public static String investmentProfitTransactionDefault = "Profit from investment";
   public static String monthlyIncomeDefault = "Monthly wallet income";
 
   //
@@ -64,51 +65,108 @@ public class InternalFrame {
     //
     for (Transaction t : transactions) {
       //
-      JPanel panel = new JPanel();
-      panel.setLayout(new BorderLayout());
+      JPanel panel = new JPanel(new BorderLayout());
       panel.setBorder(
           BorderFactory.createCompoundBorder(
               BorderFactory.createLineBorder(Color.LIGHT_GRAY, 2),
               BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 
       //
-      String imagePath = "";
-      switch (t.getDescription().split(" ")[0]) { // extracting purpose
-        case "Deposit":
-          imagePath = "src/main/resources/images/letter-D-90x90.png";
-          break;
-        case "Withdraw":
-          imagePath = "src/main/resources/images/letter-W-90x90.png";
-          break;
-        case "Investment":
-          imagePath = "src/main/resources/images/letter-I-90x90.png";
-          break;
-        case "Monthly":
-          imagePath = "src/main/resources/images/wallet-90x90.png";
-          break;
-      }
-
-      //
-      JLabel purposeLabel = new JLabel("Import: " + t.getAmount() + "€");
-      purposeLabel.setIcon(new ImageIcon(imagePath));
+      JLabel purposeLabel = new JLabel();
       purposeLabel.setFont(font);
       purposeLabel.setHorizontalTextPosition(JLabel.CENTER);
       purposeLabel.setVerticalTextPosition(JLabel.BOTTOM);
 
       //
+      String imagePath = "";
+      switch (t.getDescription().split(" ")[0]) { // extracting purpose
+        case "Deposit":
+          //
+          imagePath = "src/main/resources/images/letter-D-90x90.png";
+
+          //
+          purposeLabel.setText("<html><b>+" + t.getAmount() + " €</b></html>");
+          purposeLabel.setForeground(new Color(0, 175, 0));
+
+          break;
+
+        case "Withdraw":
+          imagePath = "src/main/resources/images/letter-W-90x90.png";
+          purposeLabel.setText("<html><b>-" + t.getAmount() + " €</b></html>");
+          purposeLabel.setForeground(new Color(175, 0, 0));
+
+          break;
+
+        case "Investment":
+          imagePath = "src/main/resources/images/letter-I-90x90.png";
+          purposeLabel.setText("<html><b>-" + t.getAmount() + " €</b></html>");
+          purposeLabel.setForeground(new Color(175, 0, 0));
+
+          break;
+
+        case "Profit":
+          imagePath = "src/main/resources/images/letter-I-90x90.png";
+
+          //
+          if (t.getAmount() > 0) {
+            purposeLabel.setText("<html><b>+" + t.getAmount() + " €</b></html>");
+            purposeLabel.setForeground(new Color(0, 175, 0));
+          } else {
+            purposeLabel.setText("<html><b>-" + t.getAmount() + " €</b></html>");
+            purposeLabel.setForeground(new Color(175, 0, 0));
+          }
+
+          break;
+
+        case "Monthly":
+          imagePath = "src/main/resources/images/wallet-90x90.png";
+          purposeLabel.setText("<html><b>+" + t.getAmount() + " €</b></html>");
+          purposeLabel.setForeground(new Color(0, 175, 0));
+
+          break;
+      }
+
+      //
+      purposeLabel.setIcon(new ImageIcon(imagePath));
+
+      //
       JLabel descLabel = new JLabel(t.toString());
-      descLabel.setPreferredSize(new Dimension(300, 10)); // default size of each card
+      descLabel.setPreferredSize(new Dimension(250, 100)); // default size of each card
       descLabel.setFont(font);
 
       //
-      //      if (t.getDescription().split(" ")[0].equals("Investment")) {
-      //        //
-      //        JButton showGraphButton = new JButton("Show graph");
-      //        showGraphButton.setPreferredSize(new Dimension(100,45));
-      //
-      //        //
-      //        panel.add(showGraphButton, BorderLayout.CENTER);
-      //      }
+      if (t.getDescription().split(" ")[0].equals("Investment")) {
+        //
+        JPanel showGraphPanel = new JPanel(new FlowLayout());
+
+        //
+        JButton showGraphButton = new JButton();
+        showGraphButton.setPreferredSize(new Dimension(50, 50));
+        showGraphButton.setIcon(new ImageIcon("src/main/resources/images/graph-50x50.png"));
+
+        //
+        showGraphButton.addActionListener(
+            new ActionListener() {
+              @Override
+              public void actionPerformed(ActionEvent e) {
+                try {
+                  //
+                  new ProcessBuilder(
+                          "python", "src/main/resources/graph.py", "src/main/resources/dati.csv")
+                      .start();
+                } catch (Exception exc) {
+                  System.err.println("python script failure");
+                }
+              }
+            });
+
+        //
+        showGraphPanel.add(Box.createRigidArea(new Dimension(0, 100)));
+        showGraphPanel.add(showGraphButton);
+
+        //
+        panel.add(showGraphPanel, BorderLayout.CENTER);
+      }
 
       //
       panel.add(purposeLabel, BorderLayout.WEST);
@@ -249,22 +307,8 @@ public class InternalFrame {
 
             if (!balanceModifier.getText().isEmpty()) {
 
-              try {
-                //
-                ArrayList<String> fileContent = new ArrayList<>();
-
-                try (BufferedReader inFile =
-                    new BufferedReader(new FileReader(MainFrame.getSessionUser().getFile()))) {
-                  //
-                  String line;
-                  while ((line = inFile.readLine()) != null) {
-                    fileContent.add(line);
-                  }
-                }
-
-                // Deposit action
-                if (action.equals("Deposit")) {
-
+              switch (action) {
+                case "Deposit":
                   // check if deposit is valid
                   if (MainFrame.getSessionUser()
                       .getBankAccount()
@@ -282,29 +326,26 @@ public class InternalFrame {
                             + "€");
 
                     //
-                    try (BufferedWriter outFile =
-                        new BufferedWriter(
-                            new FileWriter(MainFrame.getSessionUser().getFile(), false))) {
-                      //
-                      fileContent.set(
-                          0,
-                          "balance;"
-                              + Math.round(
-                                      MainFrame.getSessionUser().getBankAccount().getBalance()
-                                          * 100.0)
-                                  / 100.0);
+                    ArrayList<String> fileContent =
+                        MainFrame.getFileContent(MainFrame.getSessionUser().getFile());
 
-                      //
-                      fileContent.set(
-                          1,
-                          "wallet;"
-                              + Math.round(MainFrame.getSessionUser().getWallet() * 100.0) / 100.0);
+                    //
+                    fileContent.set(
+                        0,
+                        "balance;"
+                            + Math.round(
+                                    MainFrame.getSessionUser().getBankAccount().getBalance()
+                                        * 100.0)
+                                / 100.0);
 
-                      //
-                      for (String i : fileContent) {
-                        outFile.write(i + "\n");
-                      }
-                    }
+                    //
+                    fileContent.set(
+                        1,
+                        "wallet;"
+                            + Math.round(MainFrame.getSessionUser().getWallet() * 100.0) / 100.0);
+
+                    //
+                    MainFrame.writeFileContent(fileContent, MainFrame.getSessionUser().getFile());
 
                     //
                     MainFrame.getSessionUser()
@@ -321,9 +362,9 @@ public class InternalFrame {
                     JOptionPane.showInternalMessageDialog(internalFrame, "Import not valid!");
                   }
 
-                  // Withdraw action
-                } else if (action.equals("Withdraw")) {
+                  break;
 
+                case "Withdraw":
                   //
                   if (MainFrame.getSessionUser()
                       .getBankAccount()
@@ -341,29 +382,26 @@ public class InternalFrame {
                             + "€");
 
                     //
-                    try (BufferedWriter outFile =
-                        new BufferedWriter(
-                            new FileWriter(MainFrame.getSessionUser().getFile(), false))) {
-                      //
-                      fileContent.set(
-                          0,
-                          "balance;"
-                              + Math.round(
-                                      MainFrame.getSessionUser().getBankAccount().getBalance()
-                                          * 100.0)
-                                  / 100.0);
+                    ArrayList<String> fileContent =
+                        MainFrame.getFileContent(MainFrame.getSessionUser().getFile());
 
-                      //
-                      fileContent.set(
-                          1,
-                          "wallet;"
-                              + Math.round(MainFrame.getSessionUser().getWallet() * 100.0) / 100.0);
+                    //
+                    fileContent.set(
+                        0,
+                        "balance;"
+                            + Math.round(
+                                    MainFrame.getSessionUser().getBankAccount().getBalance()
+                                        * 100.0)
+                                / 100.0);
 
-                      //
-                      for (String i : fileContent) {
-                        outFile.write(i + "\n");
-                      }
-                    }
+                    //
+                    fileContent.set(
+                        1,
+                        "wallet;"
+                            + Math.round(MainFrame.getSessionUser().getWallet() * 100.0) / 100.0);
+
+                    //
+                    MainFrame.writeFileContent(fileContent, MainFrame.getSessionUser().getFile());
 
                     //
                     MainFrame.getSessionUser()
@@ -379,8 +417,10 @@ public class InternalFrame {
                   } else {
                     JOptionPane.showInternalMessageDialog(internalFrame, "Import not valid!");
                   }
-                } else if (action.equals("Invest")) {
 
+                  break;
+
+                case "Invest":
                   //
                   if (MainFrame.getSessionUser()
                       .getBankAccount()
@@ -401,48 +441,31 @@ public class InternalFrame {
                             + "€");
 
                     //
-                    try (BufferedWriter outFile =
-                        new BufferedWriter(
-                            new FileWriter(MainFrame.getSessionUser().getFile(), false))) {
-                      //
-                      fileContent.set(
-                          0,
-                          "balance;"
-                              + Math.round(
-                                      MainFrame.getSessionUser().getBankAccount().getBalance()
-                                          * 100.0)
-                                  / 100.0);
-
-                      //
-                      fileContent.set(
-                          1,
-                          "wallet;"
-                              + Math.round(MainFrame.getSessionUser().getWallet() * 100.0) / 100.0);
-
-                      //
-                      for (String i : fileContent) {
-                        outFile.write(i + "\n");
-                      }
-                    }
+                    ArrayList<String> fileContent =
+                        MainFrame.getFileContent(MainFrame.getSessionUser().getFile());
 
                     //
-                    MainFrame.getSessionUser()
-                        .getBankAccount()
-                        .addTransaction(
-                            new Transaction(
-                                Double.parseDouble(balanceModifier.getText()),
-                                LocalDateTime.now()
-                                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
-                                investmentTransactionDefault,
-                                MainFrame.getSessionUser()));
+                    fileContent.set(
+                        0,
+                        "balance;"
+                            + Math.round(
+                                    MainFrame.getSessionUser().getBankAccount().getBalance()
+                                        * 100.0)
+                                / 100.0);
 
+                    //
+                    fileContent.set(
+                        1,
+                        "wallet;"
+                            + Math.round(MainFrame.getSessionUser().getWallet() * 100.0) / 100.0);
+
+                    //
+                    MainFrame.writeFileContent(fileContent, MainFrame.getSessionUser().getFile());
                   } else {
                     JOptionPane.showInternalMessageDialog(internalFrame, "Insufficient founds!");
                   }
-                }
 
-              } catch (IOException exc) {
-                System.err.println("balance update failed");
+                  break;
               }
             }
 

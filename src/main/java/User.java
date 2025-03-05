@@ -1,14 +1,15 @@
 import java.io.*;
 
 public class User {
-  private String name;
-  private String surname;
+  private final String name;
+  private final String surname;
   private final String username;
   private final String password;
   private double wallet;
   private BankAccount bankAccount;
 
-  private File stats; // data saves for each registered user
+  private final File directory; //
+  private final File stats; // data saves for each registered user
 
   User(String name, String surname, String username, String password) {
 
@@ -17,19 +18,23 @@ public class User {
     this.username = username;
     this.password = password;
 
-    // users directory path
-    File users_dir = new File("src/main/resources/users");
+    //
+    this.directory =
+        new File(
+            "src/main/resources/users/" + this.name + "-" + this.surname + "-" + this.username);
 
-    // if dir doesn't exist, then create
-    if (users_dir.mkdir()) {
-      System.out.println("users dir created");
+    // if user dir doesn't exist, then create
+    if (directory.mkdirs()) {
+      System.out.println("user dir created");
     } else {
       System.out.println("users dir already exists");
     }
 
+    //
     this.stats =
         new File(
-            "src/main/resources/users/"
+            directory.getAbsolutePath()
+                + "/"
                 + this.name
                 + "-"
                 + this.surname
@@ -40,11 +45,11 @@ public class User {
     // for each user, a stats file is defined
     try {
       //
-      if (this.stats.createNewFile()) {
+      if (stats.createNewFile()) {
         try (BufferedWriter outFile = new BufferedWriter(new FileWriter(this.stats))) {
 
           //
-          this.bankAccount = new BankAccount(this);
+          this.bankAccount = new BankAccount();
           this.wallet = 0.0;
 
           //
@@ -66,7 +71,7 @@ public class User {
           walletValue = inFile.readLine().split(";")[1];
         }
 
-        this.bankAccount = new BankAccount(this, Double.parseDouble(balanceValue));
+        this.bankAccount = new BankAccount(Double.parseDouble(balanceValue));
         this.wallet = Double.parseDouble(walletValue);
 
         System.out.println("users stats already exists");
@@ -86,6 +91,22 @@ public class User {
 
   public void setWallet(double wallet) {
     this.wallet = wallet;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public String getSurname() {
+    return surname;
+  }
+
+  public String getUsername() {
+    return username;
+  }
+
+  public File getDirectory() {
+    return directory;
   }
 
   public File getFile() {

@@ -15,7 +15,10 @@ public class StartApp {
       if (users_info.createNewFile()) {
         // creating users_info file
         try (BufferedWriter outFile = new BufferedWriter(new FileWriter(users_info))) {
-          outFile.write("default;");
+          outFile.write("default;\ntransID;0");
+
+          //
+          Transaction.setIDCounter(0);
 
           // write on disk now
           outFile.flush();
@@ -27,16 +30,25 @@ public class StartApp {
 
         // file already exists; if there is a default user, then don't open auth procedure
         try (BufferedReader inFile = new BufferedReader(new FileReader(users_info))) {
-          String[] data = new String[4];
-          String line;
-          if (!((line = inFile.readLine()).equals("default;"))) {
-            //
-            data[0] = line.split(";")[1]; // username
-            data[1] = line.split(";")[2]; // password
-            data[2] = line.split(";")[3]; // name
-            data[3] = line.split(";")[4]; // surname
+          //
+          String defaultLine = inFile.readLine();
 
-            MainFrame.setSessionUser(new User(data[2], data[3], data[0], data[1]));
+          //
+          String transIDLine = inFile.readLine();
+
+          //
+          if (!transIDLine.split(";")[1].equals("0")) {
+            Transaction.setIDCounter(Integer.parseInt(transIDLine.split(";")[1]));
+          }
+
+          if (!defaultLine.equals("default;")) {
+            //
+            MainFrame.setSessionUser(
+                new User(
+                    defaultLine.split(";")[3], // name
+                    defaultLine.split(";")[4], // surname
+                    defaultLine.split(";")[1], // username
+                    defaultLine.split(";")[2])); // password
 
             //
             new MainFrame();
