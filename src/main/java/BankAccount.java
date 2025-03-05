@@ -92,7 +92,7 @@ public class BankAccount {
       if (newInvFile.createNewFile()) {
         System.out.println("investment file created");
       } else {
-        System.err.println("investment file already exists (impossible)");
+        System.err.println("investment file already exists (impossible exc for tests)");
       }
     } catch (IOException e) {
       System.err.println("investment file creation failed");
@@ -129,11 +129,11 @@ public class BankAccount {
       //
       if (risk.equals("Low") && (_amount < (0.7 * amount))) {
         //
-        _amount = Math.abs(_amount) * 0.7;
+        _amount = amount * 0.7;
 
       } else if (risk.equals("Medium") && (_amount < (0.4 * amount))) {
         //
-        _amount = Math.abs(amount) * 0.4;
+        _amount = amount * 0.4;
       }
 
       //
