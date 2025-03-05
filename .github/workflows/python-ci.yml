@@ -27,4 +27,4 @@ jobs:
           pip install matplotlib pandas
 
       - name: run script
-        run: python src/main/resources/graph.py
+        run: python src/main/resources/graph.py .github/workflows/data-example.csv
