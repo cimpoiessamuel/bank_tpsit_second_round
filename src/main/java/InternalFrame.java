@@ -152,7 +152,12 @@ public class InternalFrame {
                 try {
                   //
                   new ProcessBuilder(
-                          "python", "src/main/resources/graph.py", "src/main/resources/dati.csv")
+                          "python",
+                          "src/main/resources/graph.py",
+                          MainFrame.getSessionUser().getDirectory()
+                              + "/investment-"
+                              + t.getID()
+                              + ".csv")
                       .start();
                 } catch (Exception exc) {
                   System.err.println("python script failure");
