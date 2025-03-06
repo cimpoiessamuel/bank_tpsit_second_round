@@ -9,7 +9,7 @@ df = pd.read_csv(sys.argv[1], sep=";")
 
 plt.figure(figsize=(16, 10))
 
-plt.plot(df['x'], df['y'], marker='o', linestyle='-', color='b', label="Trend")
+plt.plot(df['x'], df['y'], linestyle='-', color='b', label="Trend")
 
 plt.xlabel("Time (day)")
 plt.ylabel("Value (€)")
@@ -22,5 +22,3 @@ plt.locator_params(axis='x', nbins=40)
 plt.locator_params(axis='y', nbins=40)
 
 plt.show()
-
-# print(len(df['x']))

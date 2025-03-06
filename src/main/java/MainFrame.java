@@ -263,7 +263,6 @@ public class MainFrame {
             skipMonthButton.setEnabled(false);
             logoutButton.setEnabled(false);
             exitButton.setEnabled(false);
-            mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
             //
             walletMonthlyIncome();
@@ -302,7 +301,6 @@ public class MainFrame {
                       skipMonthButton.setEnabled(true);
                       logoutButton.setEnabled(true);
                       exitButton.setEnabled(true);
-                      mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                     }
                   }
                 };
@@ -408,42 +406,23 @@ public class MainFrame {
     sessionUser.monthlyIncome();
 
     //
-    try {
-      //
-      ArrayList<String> fileContent = new ArrayList<>();
+    ArrayList<String> fileContent = getFileContent(sessionUser.getFile());
 
-      try (BufferedReader inFile = new BufferedReader(new FileReader(sessionUser.getFile()))) {
-        //
-        String line;
-        while ((line = inFile.readLine()) != null) {
-          fileContent.add(line);
-        }
-      }
+    //
+    fileContent.set(1, "wallet;" + sessionUser.getWallet());
 
-      //
-      fileContent.set(1, "wallet;" + sessionUser.getWallet());
+    //
+    writeFileContent(fileContent, sessionUser.getFile());
 
-      try (BufferedWriter outFile =
-          new BufferedWriter(new FileWriter(sessionUser.getFile(), false))) {
-        //
-        for (String i : fileContent) {
-          outFile.write(i + "\n");
-        }
-      }
-
-      //
-      sessionUser
-          .getBankAccount()
-          .addTransaction(
-              new Transaction(
-                  100.0,
-                  LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
-                  InternalFrame.monthlyIncomeDefault,
-                  sessionUser));
-
-    } catch (IOException e) {
-      System.err.println("monthly income failure");
-    }
+    //
+    sessionUser
+        .getBankAccount()
+        .addTransaction(
+            new Transaction(
+                100.0,
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
+                InternalFrame.monthlyIncomeDefault,
+                sessionUser));
   }
 
   //

@@ -112,10 +112,9 @@ public class BankAccount {
         //
         _amount = new Random().nextDouble(_risk);
 
-        //
-        if (new Random().nextInt(1000) % 2 == 0) {
-          _amount = -_amount;
-        }
+        //        if (new Random().nextInt(1000) % 2 == 0) {
+        //          _amount = -_amount;
+        //        }
 
         //
         outFile.write(i + ";" + (Math.round(_amount * 100.0) / 100.0) + "\n");
