@@ -112,10 +112,6 @@ public class BankAccount {
         //
         _amount = new Random().nextDouble(_risk);
 
-        //        if (new Random().nextInt(1000) % 2 == 0) {
-        //          _amount = -_amount;
-        //        }
-
         //
         outFile.write(i + ";" + (Math.round(_amount * 100.0) / 100.0) + "\n");
 
@@ -168,10 +164,10 @@ public class BankAccount {
         if (!line.isEmpty() && Character.isDigit(line.charAt(0))) {
           transactions.add(
               new Transaction(
-                  Integer.parseInt(line.split(";")[0]),
-                  Double.parseDouble(line.split(";")[2]),
-                  line.split(";")[1],
-                  line.split(";")[3]));
+                  Integer.parseInt(line.split(";")[0]), // ID
+                  Double.parseDouble(line.split(";")[2]), // amount
+                  line.split(";")[1], // date
+                  line.split(";")[3])); // description
         }
       }
 

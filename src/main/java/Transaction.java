@@ -34,7 +34,8 @@ public class Transaction {
     this.ID = IDCounter;
 
     //
-    try (BufferedWriter outFile = new BufferedWriter(new FileWriter(user.getFile(), true))) {
+    try (BufferedWriter outFile =
+        new BufferedWriter(new FileWriter(MainFrame.getSessionUser().getFile(), true))) {
       //
       outFile.write(ID + ";" + date + ";" + amount + ";" + description + "\n");
       outFile.flush();

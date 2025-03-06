@@ -335,18 +335,8 @@ public class MainFrame {
     // set main-frame visible
     mainFrame.setVisible(true);
 
-    // check if there is a default user
-    try (BufferedReader inFile = new BufferedReader(new FileReader(users_info))) {
-
-      // if there is not a defined user, then launch the login window
-      if (inFile.readLine().equals("default;")) {
-
-        // instantiating the main-sub-frame
-        new InternalFrame(mainFrame, users_info);
-      }
-    } catch (IOException e) {
-      System.err.println("error");
-    }
+    // instantiating the main-sub-frame
+    new InternalFrame(mainFrame, users_info);
   }
 
   public static File getUsersInfo() {
@@ -438,7 +428,7 @@ public class MainFrame {
         fileContent.add(line);
       }
     } catch (IOException e) {
-      System.err.println("sessionUser file copy failed");
+      System.err.println("file copy failed");
     }
 
     return fileContent;

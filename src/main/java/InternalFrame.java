@@ -529,10 +529,6 @@ public class InternalFrame {
   //
   InternalFrame(JFrame mainFrame, File users_info) {
 
-    //
-    mainFrame.revalidate();
-    mainFrame.repaint();
-
     // initialising main sub-frame
     JInternalFrame internalFrame = internalFrameInit(mainFrame);
 
