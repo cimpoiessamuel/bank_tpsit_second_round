@@ -13,7 +13,6 @@ import javax.swing.*;
 
 public class MainFrame {
 
-  private static final File usersInfo = new File("src/main/resources/users-info.csv");
   private static User sessionUser;
 
   // main-frame instanced for effective use
@@ -71,6 +70,12 @@ public class MainFrame {
     balanceDisplay.setHorizontalAlignment(JLabel.CENTER);
 
     //
+    JButton movementsButton =
+        new JButton(new ImageIcon("src/main/resources/images/graph-50x50.png"));
+    movementsButton.setFont(InternalFrame.fontInit(16));
+    movementsButton.setPreferredSize(new Dimension(50, 45));
+
+    //
     JButton skipMonthButton = new JButton("Skip to next month");
     skipMonthButton.setFont(InternalFrame.fontInit(16));
     skipMonthButton.setPreferredSize(new Dimension(200, 45));
@@ -82,6 +87,8 @@ public class MainFrame {
     //
     southPanel.add(balanceDisplay);
     southPanel.add(Box.createRigidArea(new Dimension(100, 0))); //
+    southPanel.add(movementsButton);
+    // southPanel.add(Box.createRigidArea(new Dimension(50, 0))); //
     southPanel.add(skipMonthButton);
     southPanel.add(Box.createRigidArea(new Dimension(50, 0))); //
     southPanel.add(counterLabel);
@@ -216,7 +223,7 @@ public class MainFrame {
           public void actionPerformed(ActionEvent e) {
 
             //
-            ArrayList<String> fileContent = getFileContent(usersInfo);
+            ArrayList<String> fileContent = getFileContent(StartApp.getUsersInfo());
 
             //
             fileContent.set(0, "default;");
@@ -225,13 +232,13 @@ public class MainFrame {
             fileContent.set(1, "TransID;" + Transaction.getIDCounter());
 
             //
-            writeFileContent(fileContent, usersInfo);
+            writeFileContent(fileContent, StartApp.getUsersInfo());
 
             // arresting current main frame
             mainFrame.dispose();
 
             // instancing new main frame for authentication
-            new MainFrame(usersInfo);
+            new MainFrame(StartApp.getUsersInfo());
           }
         });
 
@@ -241,16 +248,34 @@ public class MainFrame {
           @Override
           public void actionPerformed(ActionEvent e) {
             //
-            ArrayList<String> fileContent = getFileContent(usersInfo);
+            ArrayList<String> fileContent = getFileContent(StartApp.getUsersInfo());
 
             //
             fileContent.set(1, "TransID;" + Transaction.getIDCounter());
 
             //
-            writeFileContent(fileContent, usersInfo);
+            writeFileContent(fileContent, StartApp.getUsersInfo());
 
             // close current main frame
             mainFrame.dispose();
+          }
+        });
+
+    //
+    movementsButton.addActionListener(
+        new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            try {
+              //
+              new ProcessBuilder(
+                      "python",
+                      "src/main/resources/graph.py",
+                      MainFrame.getSessionUser().getDirectory() + "/trend-record.csv")
+                  .start();
+            } catch (Exception exc) {
+              System.err.println("python script failure");
+            }
           }
         });
 
@@ -339,10 +364,6 @@ public class MainFrame {
     new InternalFrame(mainFrame, users_info);
   }
 
-  public static File getUsersInfo() {
-    return usersInfo;
-  }
-
   public static User getSessionUser() {
     return sessionUser;
   }
@@ -396,13 +417,13 @@ public class MainFrame {
     sessionUser.monthlyIncome();
 
     //
-    ArrayList<String> fileContent = getFileContent(sessionUser.getFile());
+    ArrayList<String> fileContent = getFileContent(sessionUser.getStatsFile());
 
     //
     fileContent.set(1, "wallet;" + sessionUser.getWallet());
 
     //
-    writeFileContent(fileContent, sessionUser.getFile());
+    writeFileContent(fileContent, sessionUser.getStatsFile());
 
     //
     sessionUser

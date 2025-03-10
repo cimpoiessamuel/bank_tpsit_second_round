@@ -1,4 +1,6 @@
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class User {
   private final String name;
@@ -9,7 +11,9 @@ public class User {
   private BankAccount bankAccount;
 
   private final File directory; //
-  private final File stats; // data saves for each registered user
+  private final File stats; // data saved for each registered user
+  private final File transRecord; //
+  private final File trendRecord; //
 
   User(String name, String surname, String username, String password) {
 
@@ -19,70 +23,116 @@ public class User {
     this.password = password;
 
     //
-    this.directory =
+    directory =
         new File(
             "src/main/resources/users/" + this.name + "-" + this.surname + "-" + this.username);
 
-    // if user dir doesn't exist, then create
-    if (directory.mkdirs()) {
-      System.out.println("user dir created");
-    } else {
-      System.out.println("users dir already exists");
-    }
+    //
+    stats = new File(directory.getAbsolutePath() + "/stats.csv");
 
     //
-    this.stats =
-        new File(
-            directory.getAbsolutePath()
-                + "/"
-                + this.name
-                + "-"
-                + this.surname
-                + "-"
-                + this.username
-                + ".csv");
+    transRecord = new File(directory.getAbsolutePath() + "/trans-record.csv");
 
-    // for each user, a stats file is defined
+    //
+    trendRecord = new File(directory.getAbsolutePath() + "/trend-record.csv");
+
+    //
     try {
-      //
-      if (stats.createNewFile()) {
-        try (BufferedWriter outFile = new BufferedWriter(new FileWriter(this.stats))) {
+      // if user dir doesn't exist, then create
+      if (directory.mkdirs()) {
+        System.out.println("user dir created");
 
-          //
-          this.bankAccount = new BankAccount();
-          this.wallet = 0.0;
+        // for each user, a stats file is defined
+        if (stats.createNewFile()) {
+          System.out.println("user stats created");
 
-          //
-          outFile.write("balance;" + bankAccount.getBalance());
-          outFile.write("\nwallet;" + wallet);
-          outFile.write("\nname;" + name);
-          outFile.write("\nsurname;" + surname);
+          try (BufferedWriter outFile = new BufferedWriter(new FileWriter(stats))) {
+
+            //
+            bankAccount = new BankAccount();
+            wallet = 0.0;
+
+            //
+            outFile.write("balance;" + bankAccount.getBalance());
+            outFile.write("\nwallet;" + wallet);
+            outFile.write("\nname;" + name);
+            outFile.write("\nsurname;" + surname);
+
+            //
+            outFile.flush();
+          }
         }
 
-        System.out.println("users stats created");
+        //
+        if (transRecord.createNewFile()) {
+          System.out.println("user trans-record created");
+        }
+
+        //
+        if (trendRecord.createNewFile()) {
+          System.out.println("user trend-record created");
+
+          //
+          try (BufferedWriter outFile = new BufferedWriter(new FileWriter(trendRecord))) {
+            outFile.write("x;y;z");
+            outFile.newLine();
+            outFile.write(
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM HH:mm:ss"))
+                    + ";"
+                    + getBankAccount().getBalance()
+                    + ";"
+                    + getWallet());
+
+            outFile.newLine();
+          }
+        }
+
       } else {
+        System.out.println("user dir already exists");
+        System.out.println("user stats already exists");
+        System.out.println("user trans-record already exists");
+
         //
         String balanceValue;
         String walletValue;
 
         //
-        try (BufferedReader inFile = new BufferedReader(new FileReader(this.stats))) {
+        try (BufferedReader inFile = new BufferedReader(new FileReader(stats))) {
           balanceValue = inFile.readLine().split(";")[1];
           walletValue = inFile.readLine().split(";")[1];
         }
 
-        this.bankAccount = new BankAccount(Double.parseDouble(balanceValue));
-        this.wallet = Double.parseDouble(walletValue);
-
-        System.out.println("users stats already exists");
+        bankAccount = new BankAccount(Double.parseDouble(balanceValue));
+        wallet = Double.parseDouble(walletValue);
       }
     } catch (IOException e) {
-      System.err.println("user stats error");
+      System.err.println("new user data writing failed");
+    }
+  }
+
+  //
+  public void updateTrend() {
+    try (BufferedWriter outFile = new BufferedWriter(new FileWriter(trendRecord, true))) {
+      //
+      outFile.write(
+          LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM HH:mm:ss"))
+              + ";"
+              + Math.round(getBankAccount().getBalance() * 100.0) / 100.0
+              + ";"
+              + Math.round(getWallet() * 100.0) / 100.0);
+
+      outFile.newLine();
+
+    } catch (IOException e) {
+      System.err.println("balance update failed");
     }
   }
 
   public void monthlyIncome() {
     wallet += 100;
+
+    //
+    updateTrend();
   }
 
   public double getWallet() {
@@ -90,19 +140,19 @@ public class User {
   }
 
   public void setWallet(double wallet) {
-    this.wallet = wallet;
-  }
-
-  public String getName() {
-    return name;
+    this.wallet = Math.round(wallet * 100.0) / 100.0;
   }
 
   public File getDirectory() {
     return directory;
   }
 
-  public File getFile() {
+  public File getStatsFile() {
     return stats;
+  }
+
+  public File getTransRecordFile() {
+    return transRecord;
   }
 
   public BankAccount getBankAccount() {

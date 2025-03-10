@@ -140,9 +140,9 @@ public class InternalFrame {
         JPanel showGraphPanel = new JPanel(new FlowLayout());
 
         //
-        JButton showGraphButton = new JButton();
+        JButton showGraphButton =
+            new JButton(new ImageIcon("src/main/resources/images/graph-50x50.png"));
         showGraphButton.setPreferredSize(new Dimension(50, 50));
-        showGraphButton.setIcon(new ImageIcon("src/main/resources/images/graph-50x50.png"));
 
         //
         showGraphButton.addActionListener(
@@ -332,7 +332,7 @@ public class InternalFrame {
 
                     //
                     ArrayList<String> fileContent =
-                        MainFrame.getFileContent(MainFrame.getSessionUser().getFile());
+                        MainFrame.getFileContent(MainFrame.getSessionUser().getStatsFile());
 
                     //
                     fileContent.set(
@@ -350,7 +350,11 @@ public class InternalFrame {
                             + Math.round(MainFrame.getSessionUser().getWallet() * 100.0) / 100.0);
 
                     //
-                    MainFrame.writeFileContent(fileContent, MainFrame.getSessionUser().getFile());
+                    MainFrame.writeFileContent(
+                        fileContent, MainFrame.getSessionUser().getStatsFile());
+
+                    //
+                    MainFrame.getSessionUser().updateTrend();
 
                     //
                     MainFrame.getSessionUser()
@@ -388,7 +392,7 @@ public class InternalFrame {
 
                     //
                     ArrayList<String> fileContent =
-                        MainFrame.getFileContent(MainFrame.getSessionUser().getFile());
+                        MainFrame.getFileContent(MainFrame.getSessionUser().getStatsFile());
 
                     //
                     fileContent.set(
@@ -406,7 +410,11 @@ public class InternalFrame {
                             + Math.round(MainFrame.getSessionUser().getWallet() * 100.0) / 100.0);
 
                     //
-                    MainFrame.writeFileContent(fileContent, MainFrame.getSessionUser().getFile());
+                    MainFrame.writeFileContent(
+                        fileContent, MainFrame.getSessionUser().getStatsFile());
+
+                    //
+                    MainFrame.getSessionUser().updateTrend();
 
                     //
                     MainFrame.getSessionUser()
@@ -447,7 +455,7 @@ public class InternalFrame {
 
                     //
                     ArrayList<String> fileContent =
-                        MainFrame.getFileContent(MainFrame.getSessionUser().getFile());
+                        MainFrame.getFileContent(MainFrame.getSessionUser().getStatsFile());
 
                     //
                     fileContent.set(
@@ -465,7 +473,8 @@ public class InternalFrame {
                             + Math.round(MainFrame.getSessionUser().getWallet() * 100.0) / 100.0);
 
                     //
-                    MainFrame.writeFileContent(fileContent, MainFrame.getSessionUser().getFile());
+                    MainFrame.writeFileContent(
+                        fileContent, MainFrame.getSessionUser().getStatsFile());
                   } else {
                     JOptionPane.showInternalMessageDialog(internalFrame, "Insufficient founds!");
                   }

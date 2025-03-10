@@ -24,8 +24,9 @@ public class BankAccount {
 
   public boolean deposit(double s) {
     if (s <= MainFrame.getSessionUser().getWallet()) {
-      balance += s;
+      balance += Math.round(s * 100.0) / 100.0;
       MainFrame.getSessionUser().setWallet(MainFrame.getSessionUser().getWallet() - s);
+
       return true;
     }
 
@@ -34,8 +35,9 @@ public class BankAccount {
 
   public boolean withdraw(double s) {
     if (balance - s >= 0) {
-      balance -= s;
+      balance -= Math.round(s * 100.0) / 100.0;
       MainFrame.getSessionUser().setWallet(MainFrame.getSessionUser().getWallet() + s);
+
       return true;
     }
 
@@ -60,6 +62,9 @@ public class BankAccount {
 
     //
     balance -= amount;
+
+    //
+    MainFrame.getSessionUser().updateTrend();
 
     //
     int _period =
@@ -104,8 +109,12 @@ public class BankAccount {
     //
     try (BufferedWriter outFile = new BufferedWriter(new FileWriter(newInvFile))) {
       //
-      outFile.write("x;y\n");
-      outFile.write("0;" + _amount + "\n");
+      outFile.write("x;y");
+      outFile.newLine();
+
+      //
+      outFile.write("0;" + _amount);
+      outFile.newLine();
 
       //
       for (int i = 1; i <= _period; i++) {
@@ -113,7 +122,8 @@ public class BankAccount {
         _amount = new Random().nextDouble(_risk);
 
         //
-        outFile.write(i + ";" + (Math.round(_amount * 100.0) / 100.0) + "\n");
+        outFile.write(i + ";" + (Math.round(_amount * 100.0) / 100.0));
+        outFile.newLine();
 
         //
         if (i % 30 == 0) {
@@ -149,7 +159,10 @@ public class BankAccount {
                 MainFrame.getSessionUser()));
 
     //
-    balance += _amount;
+    balance += Math.round(_amount * 100.0) / 100.0;
+
+    //
+    MainFrame.getSessionUser().updateTrend();
 
     return true;
   }
@@ -157,7 +170,7 @@ public class BankAccount {
   public void readTransactions() {
     //
     try (BufferedReader inFile =
-        new BufferedReader(new FileReader(MainFrame.getSessionUser().getFile()))) {
+        new BufferedReader(new FileReader(MainFrame.getSessionUser().getTransRecordFile()))) {
       //
       String line;
       while ((line = inFile.readLine()) != null) {

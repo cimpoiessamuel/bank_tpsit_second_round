@@ -2,20 +2,19 @@ import java.io.*;
 
 public class StartApp {
 
+  private static final File usersInfo =
+      new File("src/main/resources/users-info.csv"); // users_info.txt initialisation
+
   StartApp() {
-
-    // users_info.txt initialisation
-    String filePath = "src/main/resources/users-info.csv";
-
-    // file initialization
-    File users_info = new File(filePath);
 
     // check if file exists, if not then create file
     try {
-      if (users_info.createNewFile()) {
+      if (usersInfo.createNewFile()) {
         // creating users_info file
-        try (BufferedWriter outFile = new BufferedWriter(new FileWriter(users_info))) {
+        try (BufferedWriter outFile = new BufferedWriter(new FileWriter(usersInfo))) {
           outFile.write("default;\ntransID;0");
+          outFile.newLine();
+          outFile.newLine();
 
           //
           Transaction.setIDCounter(0);
@@ -29,7 +28,7 @@ public class StartApp {
         System.out.println("users-info already exists");
 
         // file already exists; if there is a default user, then don't open auth procedure
-        try (BufferedReader inFile = new BufferedReader(new FileReader(users_info))) {
+        try (BufferedReader inFile = new BufferedReader(new FileReader(usersInfo))) {
           //
           String defaultLine = inFile.readLine();
 
@@ -62,6 +61,10 @@ public class StartApp {
     }
 
     // instancing main frame for authentication
-    new MainFrame(users_info);
+    new MainFrame(usersInfo);
+  }
+
+  public static File getUsersInfo() {
+    return usersInfo;
   }
 }

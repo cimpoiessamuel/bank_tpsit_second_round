@@ -122,7 +122,7 @@ public class RegisterInternalFrame {
             try (BufferedReader inFile = new BufferedReader(new FileReader(users_info));
                 BufferedWriter outFile = new BufferedWriter(new FileWriter(users_info, true))) {
 
-              String newUserInfo = "\n\n";
+              String newUserInfo = "";
 
               // username field
               if (!usernameTextField.getText().isEmpty()
@@ -207,6 +207,10 @@ public class RegisterInternalFrame {
 
               // writing in users_info.txt
               outFile.write(newUserInfo);
+              outFile.newLine();
+              outFile.newLine();
+
+              //
               outFile.flush();
 
               //

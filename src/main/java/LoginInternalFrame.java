@@ -127,7 +127,7 @@ public class LoginInternalFrame {
                   if (rememberMe.isSelected()) {
                     //
                     ArrayList<String> fileContent =
-                        MainFrame.getFileContent(MainFrame.getUsersInfo());
+                        MainFrame.getFileContent(StartApp.getUsersInfo());
 
                     //
                     fileContent.set(
@@ -142,7 +142,7 @@ public class LoginInternalFrame {
                             + userSurname);
 
                     //
-                    MainFrame.writeFileContent(fileContent, MainFrame.getUsersInfo());
+                    MainFrame.writeFileContent(fileContent, StartApp.getUsersInfo());
                   }
 
                   // closing the login/sign-in window

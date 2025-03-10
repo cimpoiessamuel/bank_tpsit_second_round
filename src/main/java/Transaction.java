@@ -35,9 +35,12 @@ public class Transaction {
 
     //
     try (BufferedWriter outFile =
-        new BufferedWriter(new FileWriter(MainFrame.getSessionUser().getFile(), true))) {
+        new BufferedWriter(new FileWriter(MainFrame.getSessionUser().getTransRecordFile(), true))) {
       //
-      outFile.write(ID + ";" + date + ";" + amount + ";" + description + "\n");
+      outFile.write(ID + ";" + date + ";" + amount + ";" + description);
+      outFile.newLine();
+
+      //
       outFile.flush();
 
       System.out.println("transaction written");
