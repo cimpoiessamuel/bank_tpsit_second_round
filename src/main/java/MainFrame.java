@@ -60,12 +60,7 @@ public class MainFrame {
 
     // balance label
     JLabel balanceDisplay = new JLabel();
-    balanceDisplay.setText(
-        "Balance   "
-            + sessionUser.getBankAccount().getBalance()
-            + "€           Wallet   "
-            + sessionUser.getWallet()
-            + "€");
+    updateVisualBalance(balanceDisplay);
     balanceDisplay.setFont(font);
     balanceDisplay.setHorizontalAlignment(JLabel.CENTER);
 
