@@ -17,11 +17,7 @@ public class Transaction {
   }
 
   // creating new transaction
-  public Transaction(
-      double amount,
-      String date,
-      String description,
-      User user) { // user param. just for distinguish constructors
+  public Transaction(double amount, String date, String description) {
 
     this.amount = amount;
     this.date = date;

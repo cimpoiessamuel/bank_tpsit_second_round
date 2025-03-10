@@ -54,8 +54,7 @@ public class BankAccount {
         new Transaction(
             amount,
             LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
-            InternalFrame.investmentTransactionDefault,
-            MainFrame.getSessionUser());
+            InternalFrame.investmentTransactionDefault);
 
     //
     MainFrame.getSessionUser().getBankAccount().addTransaction(lastInvestment);
@@ -155,8 +154,7 @@ public class BankAccount {
             new Transaction(
                 (Math.round(_amount * 100.0) / 100.0),
                 LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
-                InternalFrame.investmentProfitTransactionDefault,
-                MainFrame.getSessionUser()));
+                InternalFrame.investmentProfitTransactionDefault));
 
     //
     balance += Math.round(_amount * 100.0) / 100.0;
@@ -175,6 +173,9 @@ public class BankAccount {
       String line;
       while ((line = inFile.readLine()) != null) {
         if (!line.isEmpty() && Character.isDigit(line.charAt(0))) {
+          System.out.println("transaction read");
+
+          //
           transactions.add(
               new Transaction(
                   Integer.parseInt(line.split(";")[0]), // ID

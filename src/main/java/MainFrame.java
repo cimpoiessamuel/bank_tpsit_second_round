@@ -417,13 +417,7 @@ public class MainFrame {
     sessionUser.monthlyIncome();
 
     //
-    ArrayList<String> fileContent = getFileContent(sessionUser.getStatsFile());
-
-    //
-    fileContent.set(1, "wallet;" + sessionUser.getWallet());
-
-    //
-    writeFileContent(fileContent, sessionUser.getStatsFile());
+    updateStats();
 
     //
     sessionUser
@@ -432,8 +426,34 @@ public class MainFrame {
             new Transaction(
                 100.0,
                 LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
-                InternalFrame.monthlyIncomeDefault,
-                sessionUser));
+                InternalFrame.monthlyIncomeDefault));
+  }
+
+  //
+  public static void updateVisualBalance(JLabel balanceDisplay) {
+    //
+    balanceDisplay.setText(
+        "Balance   "
+            + Math.round(getSessionUser().getBankAccount().getBalance() * 100.0) / 100.0
+            + "€           Wallet   "
+            + Math.round(getSessionUser().getWallet() * 100.0) / 100.0
+            + "€");
+  }
+
+  //
+  public static void updateStats() {
+    //
+    ArrayList<String> fileContent = getFileContent(getSessionUser().getStatsFile());
+
+    //
+    fileContent.set(
+        0, "balance;" + Math.round(getSessionUser().getBankAccount().getBalance() * 100.0) / 100.0);
+
+    //
+    fileContent.set(1, "wallet;" + Math.round(getSessionUser().getWallet() * 100.0) / 100.0);
+
+    //
+    writeFileContent(fileContent, getSessionUser().getStatsFile());
   }
 
   //
@@ -461,7 +481,8 @@ public class MainFrame {
     try (BufferedWriter outFile = new BufferedWriter(new FileWriter(file, false))) {
       //
       for (String i : fileContent) {
-        outFile.write(i + "\n");
+        outFile.write(i);
+        outFile.newLine();
       }
     } catch (IOException e) {
       System.err.println("re-writing file failed");

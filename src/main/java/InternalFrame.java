@@ -320,38 +320,10 @@ public class InternalFrame {
                       .deposit(Double.parseDouble(balanceModifier.getText()))) {
 
                     //
-                    balanceDisplay.setText(
-                        "Balance   "
-                            + Math.round(
-                                    MainFrame.getSessionUser().getBankAccount().getBalance()
-                                        * 100.0)
-                                / 100.0
-                            + "€           Wallet   "
-                            + Math.round(MainFrame.getSessionUser().getWallet() * 100.0) / 100.0
-                            + "€");
+                    MainFrame.updateVisualBalance(balanceDisplay);
 
                     //
-                    ArrayList<String> fileContent =
-                        MainFrame.getFileContent(MainFrame.getSessionUser().getStatsFile());
-
-                    //
-                    fileContent.set(
-                        0,
-                        "balance;"
-                            + Math.round(
-                                    MainFrame.getSessionUser().getBankAccount().getBalance()
-                                        * 100.0)
-                                / 100.0);
-
-                    //
-                    fileContent.set(
-                        1,
-                        "wallet;"
-                            + Math.round(MainFrame.getSessionUser().getWallet() * 100.0) / 100.0);
-
-                    //
-                    MainFrame.writeFileContent(
-                        fileContent, MainFrame.getSessionUser().getStatsFile());
+                    MainFrame.updateStats();
 
                     //
                     MainFrame.getSessionUser().updateTrend();
@@ -364,8 +336,7 @@ public class InternalFrame {
                                 Double.parseDouble(balanceModifier.getText()),
                                 LocalDateTime.now()
                                     .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
-                                depositTransactionDefault,
-                                MainFrame.getSessionUser()));
+                                depositTransactionDefault));
 
                   } else {
                     JOptionPane.showInternalMessageDialog(internalFrame, "Import not valid!");
@@ -380,38 +351,10 @@ public class InternalFrame {
                       .withdraw(Double.parseDouble(balanceModifier.getText()))) {
 
                     //
-                    balanceDisplay.setText(
-                        "Balance   "
-                            + Math.round(
-                                    MainFrame.getSessionUser().getBankAccount().getBalance()
-                                        * 100.0)
-                                / 100.0
-                            + "€           Wallet   "
-                            + Math.round(MainFrame.getSessionUser().getWallet() * 100.0) / 100.0
-                            + "€");
+                    MainFrame.updateVisualBalance(balanceDisplay);
 
                     //
-                    ArrayList<String> fileContent =
-                        MainFrame.getFileContent(MainFrame.getSessionUser().getStatsFile());
-
-                    //
-                    fileContent.set(
-                        0,
-                        "balance;"
-                            + Math.round(
-                                    MainFrame.getSessionUser().getBankAccount().getBalance()
-                                        * 100.0)
-                                / 100.0);
-
-                    //
-                    fileContent.set(
-                        1,
-                        "wallet;"
-                            + Math.round(MainFrame.getSessionUser().getWallet() * 100.0) / 100.0);
-
-                    //
-                    MainFrame.writeFileContent(
-                        fileContent, MainFrame.getSessionUser().getStatsFile());
+                    MainFrame.updateStats();
 
                     //
                     MainFrame.getSessionUser().updateTrend();
@@ -424,8 +367,7 @@ public class InternalFrame {
                                 Double.parseDouble(balanceModifier.getText()),
                                 LocalDateTime.now()
                                     .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
-                                withdrawTransactionDefault,
-                                MainFrame.getSessionUser()));
+                                withdrawTransactionDefault));
 
                   } else {
                     JOptionPane.showInternalMessageDialog(internalFrame, "Import not valid!");
@@ -443,38 +385,11 @@ public class InternalFrame {
                           (String) riskBox.getSelectedItem())) {
 
                     //
-                    balanceDisplay.setText(
-                        "Balance   "
-                            + Math.round(
-                                    MainFrame.getSessionUser().getBankAccount().getBalance()
-                                        * 100.0)
-                                / 100.0
-                            + "€           Wallet   "
-                            + Math.round(MainFrame.getSessionUser().getWallet() * 100.0) / 100.0
-                            + "€");
+                    MainFrame.updateVisualBalance(balanceDisplay);
 
                     //
-                    ArrayList<String> fileContent =
-                        MainFrame.getFileContent(MainFrame.getSessionUser().getStatsFile());
+                    MainFrame.updateStats();
 
-                    //
-                    fileContent.set(
-                        0,
-                        "balance;"
-                            + Math.round(
-                                    MainFrame.getSessionUser().getBankAccount().getBalance()
-                                        * 100.0)
-                                / 100.0);
-
-                    //
-                    fileContent.set(
-                        1,
-                        "wallet;"
-                            + Math.round(MainFrame.getSessionUser().getWallet() * 100.0) / 100.0);
-
-                    //
-                    MainFrame.writeFileContent(
-                        fileContent, MainFrame.getSessionUser().getStatsFile());
                   } else {
                     JOptionPane.showInternalMessageDialog(internalFrame, "Insufficient founds!");
                   }
