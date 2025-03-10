@@ -128,7 +128,8 @@ public class RegisterInternalFrame {
               if (!usernameTextField.getText().isEmpty()
                   && !usernameTextField.getText().equals(InternalFrame.usernameTextFieldPlaceHolder)
                   && usernameTextField.getText().length() > 3) {
-                newUserInfo += "username;" + usernameTextField.getText();
+                newUserInfo +=
+                    "username;" + StartApp.crypt(usernameTextField.getText(), StartApp.getKey());
               } else {
                 JOptionPane.showInternalMessageDialog(
                     internalFrame, "Username must be at least 4 digits long");
@@ -140,7 +141,10 @@ public class RegisterInternalFrame {
                   && !String.valueOf(passwordTextField.getPassword())
                       .equals(InternalFrame.passwordTextFieldPlaceHolder)
                   && passwordTextField.getPassword().length > 7) {
-                newUserInfo += "\npassword;" + String.valueOf(passwordTextField.getPassword());
+                newUserInfo +=
+                    "\npassword;"
+                        + StartApp.crypt(
+                            String.valueOf(passwordTextField.getPassword()), StartApp.getKey());
               } else {
                 JOptionPane.showInternalMessageDialog(
                     internalFrame, "Password must be at least 8 digits long");
@@ -172,23 +176,25 @@ public class RegisterInternalFrame {
               // check if the typed username already exists
               String line;
 
-              while ((line = inFile.readLine()) != null) {
-                if (!usernameTextField.getText().equals("name")
-                    && !usernameTextField.getText().equals("surname")
-                    && !usernameTextField.getText().equals("username")
-                    && !usernameTextField.getText().equals("password")) {
+              if (!usernameTextField.getText().equals("name")
+                  && !usernameTextField.getText().equals("surname")
+                  && !usernameTextField.getText().equals("username")
+                  && !usernameTextField.getText().equals("password")) {
+
+                while ((line = inFile.readLine()) != null) {
                   if (!line.isEmpty()
                       && (line.split(";")[0].equals("username")
-                          && line.split(";")[1].equals(usernameTextField.getText()))) {
+                          && StartApp.decrypt(line.split(";")[1], StartApp.getKey())
+                              .equals(usernameTextField.getText()))) {
                     JOptionPane.showInternalMessageDialog(internalFrame, "Username already taken");
                     return;
                   }
-                } else {
-                  JOptionPane.showInternalMessageDialog(
-                      internalFrame,
-                      "Banned usernames: \"name\", \"surname\", \"username\", \"password\"");
-                  return;
                 }
+              } else {
+                JOptionPane.showInternalMessageDialog(
+                    internalFrame,
+                    "Banned usernames: \"name\", \"surname\", \"username\", \"password\"");
+                return;
               }
 
               // instancing new registered user

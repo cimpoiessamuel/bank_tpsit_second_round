@@ -4,6 +4,7 @@ public class StartApp {
 
   private static final File usersInfo =
       new File("src/main/resources/users-info.csv"); // users_info.txt initialisation
+  private static final int key = 5;
 
   StartApp() {
 
@@ -46,8 +47,8 @@ public class StartApp {
                 new User(
                     defaultLine.split(";")[3], // name
                     defaultLine.split(";")[4], // surname
-                    defaultLine.split(";")[1], // username
-                    defaultLine.split(";")[2])); // password
+                    decrypt(defaultLine.split(";")[1], key), // username
+                    decrypt(defaultLine.split(";")[2], key))); // password
 
             //
             new MainFrame();
@@ -66,5 +67,31 @@ public class StartApp {
 
   public static File getUsersInfo() {
     return usersInfo;
+  }
+
+  public static int getKey() {
+    return key;
+  }
+
+  public static String crypt(String str, int key) {
+    StringBuilder newStr = new StringBuilder();
+
+    for (int i = 0; i < str.length(); i++) {
+      char currentChar = str.charAt(i);
+
+      if (Character.isLetter(currentChar)) {
+        char base = (Character.isUpperCase(currentChar)) ? 'A' : 'a';
+
+        currentChar = (char) ((currentChar - base + key) % 26 + base);
+      }
+
+      newStr.append(currentChar);
+    }
+
+    return newStr.toString();
+  }
+
+  public static String decrypt(String str, int key) {
+    return crypt(str, 26 - (key % 26));
   }
 }

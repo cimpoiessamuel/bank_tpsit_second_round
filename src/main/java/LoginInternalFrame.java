@@ -104,14 +104,15 @@ public class LoginInternalFrame {
               while ((userUsername = inFile.readLine()) != null) {
 
                 if ((!userUsername.isEmpty() && !userUsername.equals("default;"))
-                    && ((userUsername.split(";")[1].equals(usernameTextField.getText()))
-                        && (userPassword = inFile.readLine())
-                            .split(";")[1].equals(
-                                String.valueOf(passwordTextField.getPassword())))) {
+                    && ((StartApp.decrypt(userUsername.split(";")[1], StartApp.getKey())
+                            .equals(usernameTextField.getText()))
+                        && StartApp.decrypt(
+                                (userPassword = inFile.readLine()).split(";")[1], StartApp.getKey())
+                            .equals(String.valueOf(passwordTextField.getPassword())))) {
 
                   //
-                  userUsername = userUsername.split(";")[1];
-                  userPassword = userPassword.split(";")[1];
+                  userUsername = StartApp.decrypt(userUsername.split(";")[1], StartApp.getKey());
+                  userPassword = StartApp.decrypt(userPassword.split(";")[1], StartApp.getKey());
 
                   String userName = inFile.readLine().split(";")[1];
                   String userSurname = inFile.readLine().split(";")[1];
@@ -133,9 +134,9 @@ public class LoginInternalFrame {
                     fileContent.set(
                         0,
                         "default;"
-                            + userUsername
+                            + StartApp.crypt(userUsername, StartApp.getKey())
                             + ";"
-                            + userPassword
+                            + StartApp.crypt(userPassword, StartApp.getKey())
                             + ";"
                             + userName
                             + ";"
