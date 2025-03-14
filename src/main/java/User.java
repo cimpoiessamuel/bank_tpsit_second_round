@@ -10,10 +10,10 @@ public class User {
   private double wallet;
   private BankAccount bankAccount;
 
-  private final File directory; //
-  private final File stats; // data saved for each registered user
-  private final File transRecord; //
-  private final File trendRecord; //
+  private final File directory; // every user has its own directory name 'name-surname-username'
+  private final File stats; // data saved for each registered user (balance and wallet)
+  private final File transRecord; // every transaction is written here
+  private final File trendRecord; // every balance and wallet change is written here
 
   User(String name, String surname, String username, String password) {
 
@@ -22,21 +22,16 @@ public class User {
     this.username = username;
     this.password = password;
 
-    //
     directory =
         new File(
             "src/main/resources/users/" + this.name + "-" + this.surname + "-" + this.username);
 
-    //
     stats = new File(directory.getAbsolutePath() + "/stats.csv");
 
-    //
     transRecord = new File(directory.getAbsolutePath() + "/trans-record.csv");
 
-    //
     trendRecord = new File(directory.getAbsolutePath() + "/trend-record.csv");
 
-    //
     try {
       // if user dir doesn't exist, then create
       if (directory.mkdirs()) {
@@ -48,31 +43,29 @@ public class User {
 
           try (BufferedWriter outFile = new BufferedWriter(new FileWriter(stats))) {
 
-            //
+            // new user -> new bankAccount (random value)
             bankAccount = new BankAccount();
             wallet = 0.0;
 
-            //
             outFile.write("balance;" + bankAccount.getBalance());
             outFile.write("\nwallet;" + wallet);
             outFile.write("\nname;" + name);
             outFile.write("\nsurname;" + surname);
 
-            //
             outFile.flush();
           }
         }
 
-        //
+        // creating transRecord
         if (transRecord.createNewFile()) {
           System.out.println("user trans-record created");
         }
 
-        //
+        // creating trendRecord
         if (trendRecord.createNewFile()) {
           System.out.println("user trend-record created");
 
-          //
+          // legend -> x(date);y(balance);z(wallet)
           try (BufferedWriter outFile = new BufferedWriter(new FileWriter(trendRecord))) {
             outFile.write("x;y;z");
             outFile.newLine();
@@ -92,11 +85,10 @@ public class User {
         System.out.println("user stats already exists");
         System.out.println("user trans-record already exists");
 
-        //
         String balanceValue;
         String walletValue;
 
-        //
+        // read existing values for balance and wallet
         try (BufferedReader inFile = new BufferedReader(new FileReader(stats))) {
           balanceValue = inFile.readLine().split(";")[1];
           walletValue = inFile.readLine().split(";")[1];
@@ -110,10 +102,9 @@ public class User {
     }
   }
 
-  //
+  // update the trendRecord
   public void updateTrend() {
     try (BufferedWriter outFile = new BufferedWriter(new FileWriter(trendRecord, true))) {
-      //
       outFile.write(
           LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM HH:mm:ss"))
               + ";"
@@ -131,7 +122,6 @@ public class User {
   public void monthlyIncome() {
     wallet += 100;
 
-    //
     updateTrend();
   }
 

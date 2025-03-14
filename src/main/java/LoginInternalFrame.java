@@ -97,7 +97,6 @@ public class LoginInternalFrame {
           @Override
           public void actionPerformed(ActionEvent e) {
             try (BufferedReader inFile = new BufferedReader(new FileReader(users_info))) {
-              //
               String userUsername;
               String userPassword;
 
@@ -110,7 +109,6 @@ public class LoginInternalFrame {
                                 (userPassword = inFile.readLine()).split(";")[1], StartApp.getKey())
                             .equals(String.valueOf(passwordTextField.getPassword())))) {
 
-                  //
                   userUsername = StartApp.decrypt(userUsername.split(";")[1], StartApp.getKey());
                   userPassword = StartApp.decrypt(userPassword.split(";")[1], StartApp.getKey());
 
@@ -121,16 +119,12 @@ public class LoginInternalFrame {
                   MainFrame.setSessionUser(
                       new User(userName, userSurname, userUsername, userPassword));
 
-                  //
                   inFile.close();
 
-                  //
                   if (rememberMe.isSelected()) {
-                    //
                     ArrayList<String> fileContent =
                         MainFrame.getFileContent(StartApp.getUsersInfo());
 
-                    //
                     fileContent.set(
                         0,
                         "default;"
@@ -142,7 +136,6 @@ public class LoginInternalFrame {
                             + ";"
                             + userSurname);
 
-                    //
                     MainFrame.writeFileContent(fileContent, StartApp.getUsersInfo());
                   }
 

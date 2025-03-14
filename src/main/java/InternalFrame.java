@@ -21,20 +21,18 @@ public class InternalFrame {
   public static String investmentProfitTransactionDefault = "Profit from investment";
   public static String monthlyIncomeDefault = "Monthly wallet income";
 
-  //
+  // internal frame just for showing trans. record in the app
   InternalFrame(JFrame mainFrame) {
 
     // saving the default content pane
     JPanel mainPanel = (JPanel) mainFrame.getContentPane();
 
-    //
+    // internal frames must be contained in a JDesktopPane
     MainFrame.subWindowPaneInit(mainFrame);
 
-    //
     JPanel internalPanel = new JPanel();
     internalPanel.setLayout(new BoxLayout(internalPanel, BoxLayout.Y_AXIS));
 
-    //
     JPanel containerPanel = new JPanel();
     containerPanel.setLayout(new BoxLayout(containerPanel, BoxLayout.Y_AXIS));
     containerPanel.setAlignmentX(Component.CENTER_ALIGNMENT); //
@@ -44,47 +42,44 @@ public class InternalFrame {
     internalFrame.setTitle("Your Transactions");
     internalFrame.setContentPane(internalPanel); //
 
-    //
     JLabel mainTitle = mainTitle(internalFrame, "Transactions".toUpperCase());
     mainTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-    //
     JButton goBackButton = new JButton("Go back");
     goBackButton.setFont(fontInit(16));
     goBackButton.setAlignmentX(Component.CENTER_ALIGNMENT);
     goBackButton.setMaximumSize(new Dimension(250, 45)); // size respected by the BoxLayout
     goBackButton.setMargin(new Insets(13, 0, 13, 0)); // internal button padding
 
-    //
+    // read every transaction
     ArrayList<Transaction> transactions =
         MainFrame.getSessionUser().getBankAccount().getTransactions();
 
     // fonts for trans. cards
     Font font = fontInit(16);
 
-    //
+    // iterate through every transaction
     for (Transaction t : transactions) {
-      //
+
       JPanel panel = new JPanel(new BorderLayout());
       panel.setBorder(
           BorderFactory.createCompoundBorder(
               BorderFactory.createLineBorder(Color.LIGHT_GRAY, 2),
               BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 
-      //
       JLabel purposeLabel = new JLabel();
       purposeLabel.setFont(font);
       purposeLabel.setHorizontalTextPosition(JLabel.CENTER);
       purposeLabel.setVerticalTextPosition(JLabel.BOTTOM);
 
-      //
+      // retrieve the reason of the transaction
       String imagePath = "";
       switch (t.getDescription().split(" ")[0]) { // extracting purpose
         case "Deposit":
-          //
+          // set image
           imagePath = "src/main/resources/images/letter-D-90x90.png";
 
-          //
+          // set label
           purposeLabel.setText("<html><b>+" + t.getAmount() + " €</b></html>");
           purposeLabel.setForeground(new Color(0, 175, 0));
 
@@ -107,7 +102,6 @@ public class InternalFrame {
         case "Profit":
           imagePath = "src/main/resources/images/letter-I-90x90.png";
 
-          //
           if (t.getAmount() > 0) {
             purposeLabel.setText("<html><b>+" + t.getAmount() + " €</b></html>");
             purposeLabel.setForeground(new Color(0, 175, 0));
@@ -126,31 +120,26 @@ public class InternalFrame {
           break;
       }
 
-      //
       purposeLabel.setIcon(new ImageIcon(imagePath));
 
-      //
+      // label for description
       JLabel descLabel = new JLabel(t.toString());
       descLabel.setPreferredSize(new Dimension(250, 100)); // default size of each card
       descLabel.setFont(font);
 
-      //
       if (t.getDescription().split(" ")[0].equals("Investment")) {
-        //
         JPanel showGraphPanel = new JPanel(new FlowLayout());
 
-        //
         JButton showGraphButton =
             new JButton(new ImageIcon("src/main/resources/images/graph-50x50.png"));
         showGraphButton.setPreferredSize(new Dimension(50, 50));
 
-        //
         showGraphButton.addActionListener(
             new ActionListener() {
               @Override
               public void actionPerformed(ActionEvent e) {
                 try {
-                  //
+                  // calls the py script
                   new ProcessBuilder(
                           "python",
                           "src/main/resources/graph.py",
@@ -165,23 +154,18 @@ public class InternalFrame {
               }
             });
 
-        //
         showGraphPanel.add(Box.createRigidArea(new Dimension(0, 100)));
         showGraphPanel.add(showGraphButton);
 
-        //
         panel.add(showGraphPanel, BorderLayout.CENTER);
       }
 
-      //
       panel.add(purposeLabel, BorderLayout.WEST);
       panel.add(descLabel, BorderLayout.EAST);
 
-      //
       containerPanel.add(panel);
     }
 
-    //
     internalPanel.add(mainTitle);
     internalPanel.add(Box.createRigidArea(new Dimension(0, 5))); // invisible separator
     internalPanel.add(
@@ -206,82 +190,65 @@ public class InternalFrame {
     // everytime the internal-frame is moved, it re-center itself
     InternalFrame.noMove(mainFrame, internalFrame);
 
-    //
     goBackButton.addActionListener(
         new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
-            //
             mainFrame.setContentPane(mainPanel);
 
-            //
+            // close the internal frame
             internalFrame.dispose();
           }
         });
   }
 
-  //
+  // internal frame for deposit, withdraw and invest
   InternalFrame(JFrame mainFrame, JLabel balanceDisplay, String action) {
 
     // saving the default content pane
     JPanel mainPanel = (JPanel) mainFrame.getContentPane();
 
-    //
     MainFrame.subWindowPaneInit(mainFrame);
 
     // main internal frame
     JInternalFrame internalFrame = internalFrameInit(mainFrame);
 
-    //
     internalFrame.setTitle(action);
 
-    //
     JLabel mainTitle = mainTitle(internalFrame, action.toUpperCase());
 
-    //
     Font font = fontInit(16);
 
-    //
     JTextField balanceModifier =
         InternalFrame.textFieldInit(internalFrame, "Import to " + action, font, -100);
 
-    //
     JButton purposeButton = InternalFrame.buttonInit(internalFrame, font, action, 130);
 
-    //
     JButton cancelButton = InternalFrame.buttonInit(internalFrame, font, "Cancel", 180);
 
-    //
     JComboBox<String> periodBox = new JComboBox<>(new String[] {"Short", "Medium", "Long"});
     JComboBox<String> riskBox = new JComboBox<>(new String[] {"Low", "Medium", "High"});
 
-    //
     if (action.equals("Invest")) {
-      //
       JLabel periodLabel = labelInit(internalFrame, balanceModifier, font, "Period", -60);
 
-      //
       periodBox.setFont(font);
       periodBox.setBounds(0, 0, 250, 45);
       periodBox.setLocation(
           (internalFrame.getWidth() - periodBox.getWidth()) / 2,
           ((internalFrame.getHeight() - periodBox.getHeight()) / 2) + (-25));
 
-      //
       internalFrame.add(periodLabel);
       internalFrame.add(periodBox);
 
-      //
       JLabel riskLabel = labelInit(internalFrame, balanceModifier, font, "Risk", 20);
 
-      //
       riskBox.setFont(font);
       riskBox.setBounds(0, 0, 250, 45);
       riskBox.setLocation(
           (internalFrame.getWidth() - riskBox.getWidth()) / 2,
           ((internalFrame.getHeight() - riskBox.getHeight()) / 2) + (55));
 
-      //
       internalFrame.add(riskLabel);
       internalFrame.add(riskBox);
     } else {
@@ -289,7 +256,6 @@ public class InternalFrame {
       riskBox.setVisible(false);
     }
 
-    //
     internalFrame.add(mainTitle);
     internalFrame.add(balanceModifier);
     internalFrame.add(cancelButton);
@@ -304,7 +270,7 @@ public class InternalFrame {
     // everytime the internal-frame is moved, it re-center itself
     InternalFrame.noMove(mainFrame, internalFrame);
 
-    //
+    // changes based on the action
     purposeButton.addActionListener(
         new ActionListener() {
           @Override
@@ -319,16 +285,12 @@ public class InternalFrame {
                       .getBankAccount()
                       .deposit(Double.parseDouble(balanceModifier.getText()))) {
 
-                    //
                     MainFrame.updateVisualBalance(balanceDisplay);
 
-                    //
                     MainFrame.updateStats();
 
-                    //
                     MainFrame.getSessionUser().updateTrend();
 
-                    //
                     MainFrame.getSessionUser()
                         .getBankAccount()
                         .addTransaction(
@@ -345,21 +307,16 @@ public class InternalFrame {
                   break;
 
                 case "Withdraw":
-                  //
                   if (MainFrame.getSessionUser()
                       .getBankAccount()
                       .withdraw(Double.parseDouble(balanceModifier.getText()))) {
 
-                    //
                     MainFrame.updateVisualBalance(balanceDisplay);
 
-                    //
                     MainFrame.updateStats();
 
-                    //
                     MainFrame.getSessionUser().updateTrend();
 
-                    //
                     MainFrame.getSessionUser()
                         .getBankAccount()
                         .addTransaction(
@@ -376,7 +333,6 @@ public class InternalFrame {
                   break;
 
                 case "Invest":
-                  //
                   if (MainFrame.getSessionUser()
                       .getBankAccount()
                       .invest(
@@ -384,10 +340,8 @@ public class InternalFrame {
                           (String) periodBox.getSelectedItem(),
                           (String) riskBox.getSelectedItem())) {
 
-                    //
                     MainFrame.updateVisualBalance(balanceDisplay);
 
-                    //
                     MainFrame.updateStats();
 
                   } else {
@@ -398,28 +352,21 @@ public class InternalFrame {
               }
             }
 
-            //
             mainFrame.setContentPane(mainPanel);
-
-            //
             internalFrame.dispose();
           }
         });
 
-    //
     cancelButton.addActionListener(
         new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
-            //
             mainFrame.setContentPane(mainPanel);
-
-            //
             internalFrame.dispose();
           }
         });
 
-    //
+    // only digits and '.' allowed
     balanceModifier.addKeyListener(
         new KeyAdapter() {
           @Override
@@ -450,7 +397,7 @@ public class InternalFrame {
         });
   }
 
-  //
+  // internal frame for authentication
   InternalFrame(JFrame mainFrame, File users_info) {
 
     // initialising main sub-frame

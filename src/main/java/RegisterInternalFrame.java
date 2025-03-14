@@ -216,10 +216,9 @@ public class RegisterInternalFrame {
               outFile.newLine();
               outFile.newLine();
 
-              //
               outFile.flush();
 
-              //
+              // close the internal frame
               internalFrame.dispose();
 
             } catch (IOException exc) {

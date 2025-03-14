@@ -17,7 +17,6 @@ public class StartApp {
           outFile.newLine();
           outFile.newLine();
 
-          //
           Transaction.setIDCounter(0);
 
           // write on disk now
@@ -30,19 +29,18 @@ public class StartApp {
 
         // file already exists; if there is a default user, then don't open auth procedure
         try (BufferedReader inFile = new BufferedReader(new FileReader(usersInfo))) {
-          //
+          // line for logged user
           String defaultLine = inFile.readLine();
 
-          //
+          // line for transID
           String transIDLine = inFile.readLine();
 
-          //
           if (!transIDLine.split(";")[1].equals("0")) {
             Transaction.setIDCounter(Integer.parseInt(transIDLine.split(";")[1]));
           }
 
           if (!defaultLine.equals("default;")) {
-            //
+            // set the current user
             MainFrame.setSessionUser(
                 new User(
                     defaultLine.split(";")[3], // name
@@ -50,7 +48,7 @@ public class StartApp {
                     decrypt(defaultLine.split(";")[1], key), // username
                     decrypt(defaultLine.split(";")[2], key))); // password
 
-            //
+            // launching the bank app
             new MainFrame();
 
             return;

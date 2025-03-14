@@ -13,7 +13,7 @@ public class Transaction {
     this.amount = amount;
     this.date = date;
     this.description = description;
-    this.ID = ID;
+    this.ID = ID; // ID already known
   }
 
   // creating new transaction
@@ -23,20 +23,16 @@ public class Transaction {
     this.date = date;
     this.description = description;
 
-    //
     IDCounter++;
 
-    //
-    this.ID = IDCounter;
+    this.ID = IDCounter; // new unique ID
 
-    //
+    // write on transRecord the new transaction
     try (BufferedWriter outFile =
         new BufferedWriter(new FileWriter(MainFrame.getSessionUser().getTransRecordFile(), true))) {
-      //
       outFile.write(ID + ";" + date + ";" + amount + ";" + description);
       outFile.newLine();
 
-      //
       outFile.flush();
 
       System.out.println("transaction written");

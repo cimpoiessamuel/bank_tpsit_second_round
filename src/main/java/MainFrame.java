@@ -23,7 +23,7 @@ public class MainFrame {
       System.err.println("theme init failure");
     }
 
-    //
+    // at the start every trans. is read
     MainFrame.getSessionUser().getBankAccount().readTransactions();
 
     // initialising main frame
@@ -54,7 +54,7 @@ public class MainFrame {
     profileLabel.setHorizontalTextPosition(JLabel.RIGHT);
     profileLabel.setVerticalTextPosition(JLabel.CENTER);
 
-    //
+    // panel for balance display, graphButton and skipMonthButton
     JPanel southPanel = new JPanel();
     southPanel.setLayout(new FlowLayout());
 
@@ -64,26 +64,22 @@ public class MainFrame {
     balanceDisplay.setFont(font);
     balanceDisplay.setHorizontalAlignment(JLabel.CENTER);
 
-    //
     JButton movementsButton =
         new JButton(new ImageIcon("src/main/resources/images/graph-50x50.png"));
     movementsButton.setFont(InternalFrame.fontInit(16));
     movementsButton.setPreferredSize(new Dimension(50, 45));
 
-    //
     JButton skipMonthButton = new JButton("Skip to next month");
     skipMonthButton.setFont(InternalFrame.fontInit(16));
     skipMonthButton.setPreferredSize(new Dimension(200, 45));
 
-    //
+    // timer starts everytime skipMonthButton is clicked
     JLabel counterLabel = new JLabel();
     counterLabel.setFont(font);
 
-    //
     southPanel.add(balanceDisplay);
     southPanel.add(Box.createRigidArea(new Dimension(100, 0))); //
     southPanel.add(movementsButton);
-    // southPanel.add(Box.createRigidArea(new Dimension(50, 0))); //
     southPanel.add(skipMonthButton);
     southPanel.add(Box.createRigidArea(new Dimension(50, 0))); //
     southPanel.add(counterLabel);
@@ -92,13 +88,13 @@ public class MainFrame {
     profilePanel.add(profileLabel, BorderLayout.WEST);
     profilePanel.add(southPanel, BorderLayout.SOUTH);
 
-    //
+    // panel at the bottom for main actions
     JPanel actionsPanel = new JPanel();
     actionsPanel.setLayout(new GridBagLayout());
     actionsPanel.setBackground(new Color(0, 0, 0, 0));
     actionsPanel.setPreferredSize(new Dimension(mainFrame.getWidth(), mainFrame.getHeight() / 9));
 
-    //
+    // grid position for each action-button
     GridBagConstraints gbc = new GridBagConstraints();
     gbc.fill = GridBagConstraints.BOTH; // grows horizontally
     gbc.insets = new Insets(3, 3, 3, 3); // padding
@@ -165,13 +161,13 @@ public class MainFrame {
     mainPanel.add(profilePanel, BorderLayout.NORTH);
     mainPanel.add(actionsPanel, BorderLayout.SOUTH);
 
-    //
+    // content pane is mainPanel
     mainFrame.setContentPane(mainPanel);
 
     // setting the main-frame visible
     mainFrame.setVisible(true);
 
-    //
+    // an internal frame is instanced and the content pane changed to a DesktopPane
     depositButton.addActionListener(
         new ActionListener() {
           @Override
@@ -181,7 +177,6 @@ public class MainFrame {
           }
         });
 
-    //
     withDrawButton.addActionListener(
         new ActionListener() {
           @Override
@@ -191,7 +186,6 @@ public class MainFrame {
           }
         });
 
-    //
     investButton.addActionListener(
         new ActionListener() {
           @Override
@@ -201,7 +195,6 @@ public class MainFrame {
           }
         });
 
-    //
     showTransactionsButton.addActionListener(
         new ActionListener() {
           @Override
@@ -211,22 +204,16 @@ public class MainFrame {
           }
         });
 
-    //
+    // delete any default user and goes back to the login windows
     logoutButton.addActionListener(
         new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
-
-            //
             ArrayList<String> fileContent = getFileContent(StartApp.getUsersInfo());
 
-            //
             fileContent.set(0, "default;");
-
-            //
             fileContent.set(1, "TransID;" + Transaction.getIDCounter());
 
-            //
             writeFileContent(fileContent, StartApp.getUsersInfo());
 
             // arresting current main frame
@@ -237,18 +224,14 @@ public class MainFrame {
           }
         });
 
-    //
     exitButton.addActionListener(
         new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
-            //
             ArrayList<String> fileContent = getFileContent(StartApp.getUsersInfo());
 
-            //
             fileContent.set(1, "TransID;" + Transaction.getIDCounter());
 
-            //
             writeFileContent(fileContent, StartApp.getUsersInfo());
 
             // close current main frame
@@ -256,13 +239,13 @@ public class MainFrame {
           }
         });
 
-    //
+    // displays the movements of the user in a chart
     movementsButton.addActionListener(
         new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
             try {
-              //
+              // simulates the command line
               new ProcessBuilder(
                       "python",
                       "src/main/resources/graph.py",
@@ -274,7 +257,7 @@ public class MainFrame {
           }
         });
 
-    //
+    // travel through time, allowed every 120s -> no exit is possible
     skipMonthButton.addActionListener(
         new ActionListener() {
           @Override
@@ -284,10 +267,8 @@ public class MainFrame {
             logoutButton.setEnabled(false);
             exitButton.setEnabled(false);
 
-            //
             walletMonthlyIncome();
 
-            //
             balanceDisplay.setText(
                 "Balance   "
                     + Math.round(sessionUser.getBankAccount().getBalance() * 100.0) / 100.0
@@ -295,7 +276,6 @@ public class MainFrame {
                     + Math.round(sessionUser.getWallet() * 100.0) / 100.0
                     + "€");
 
-            //
             Timer timer = new Timer();
             TimerTask timerTask =
                 new TimerTask() {
@@ -304,20 +284,17 @@ public class MainFrame {
                   @Override
                   public void run() {
                     if (seconds > 0) {
-                      //
                       counterLabel.setText("Time left: " + seconds);
 
                       System.out.println("remaining: " + seconds);
                       seconds--;
                     } else {
 
-                      //
                       counterLabel.setText("");
 
                       System.out.println("time done");
                       timer.cancel();
 
-                      //
                       skipMonthButton.setEnabled(true);
                       logoutButton.setEnabled(true);
                       exitButton.setEnabled(true);
@@ -325,7 +302,7 @@ public class MainFrame {
                   }
                 };
 
-            //
+            // task executed every second
             timer.scheduleAtFixedRate(timerTask, 0, 1000);
           }
         });
@@ -367,7 +344,7 @@ public class MainFrame {
     sessionUser = u;
   }
 
-  //
+  // theme preferences
   private boolean setTheme(String theme) {
     switch (theme) {
       case "d": // dark theme
@@ -406,15 +383,12 @@ public class MainFrame {
     mainFrame.getContentPane().setVisible(true);
   }
 
-  //
+  // every month +100 euros are added in wallet
   public static void walletMonthlyIncome() {
-    //
     sessionUser.monthlyIncome();
 
-    //
     updateStats();
 
-    //
     sessionUser
         .getBankAccount()
         .addTransaction(
@@ -424,9 +398,8 @@ public class MainFrame {
                 InternalFrame.monthlyIncomeDefault));
   }
 
-  //
+  // refresh the balance and wallet values
   public static void updateVisualBalance(JLabel balanceDisplay) {
-    //
     balanceDisplay.setText(
         "Balance   "
             + Math.round(getSessionUser().getBankAccount().getBalance() * 100.0) / 100.0
@@ -435,30 +408,22 @@ public class MainFrame {
             + "€");
   }
 
-  //
+  // write every changes to wallet and balance in user record file
   public static void updateStats() {
-    //
     ArrayList<String> fileContent = getFileContent(getSessionUser().getStatsFile());
 
-    //
     fileContent.set(
         0, "balance;" + Math.round(getSessionUser().getBankAccount().getBalance() * 100.0) / 100.0);
-
-    //
     fileContent.set(1, "wallet;" + Math.round(getSessionUser().getWallet() * 100.0) / 100.0);
 
-    //
     writeFileContent(fileContent, getSessionUser().getStatsFile());
   }
 
-  //
+  // returns an ArrayList with every line of a text file
   public static ArrayList<String> getFileContent(File file) {
-    //
     ArrayList<String> fileContent = new ArrayList<>();
 
-    //
     try (BufferedReader inFile = new BufferedReader(new FileReader(file))) {
-      //
       String line;
       while ((line = inFile.readLine()) != null) {
         fileContent.add(line);
@@ -470,11 +435,9 @@ public class MainFrame {
     return fileContent;
   }
 
-  //
+  // write every string contained in the vector in the file
   public static void writeFileContent(ArrayList<String> fileContent, File file) {
-    //
     try (BufferedWriter outFile = new BufferedWriter(new FileWriter(file, false))) {
-      //
       for (String i : fileContent) {
         outFile.write(i);
         outFile.newLine();
